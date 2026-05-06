@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Micro-MDT — case_low_001</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#1a1a2e;line-height:1.6}
+.container{max-width:960px;margin:0 auto;padding:24px}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:32px;border-radius:12px;margin-bottom:24px}
+.header h1{font-size:24px;margin-bottom:8px}
+.header .meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600}
+.badge-low{background:#52c41a;color:#fff}
+.badge-medium{background:#faad14;color:#fff}
+.badge-high{background:#ff4d4f;color:#fff}
+.badge-pass{background:#52c41a;color:#fff}
+.badge-revise{background:#faad14;color:#1a1a2e}
+.badge-abstain{background:#ff4d4f;color:#fff}
+.card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.card h2{font-size:18px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #f0f0f0}
+.flow-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 0}
+.flow{display:flex;align-items:flex-start;gap:10px;padding:12px 4px;min-width:max-content}
+.flow-node{background:#e6f7ff;border:2px solid #91d5ff;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:500;text-align:center;min-width:72px;transition:all .2s}
+.flow-node.active{background:#e6f7ff;border-color:#1890ff}
+.flow-node.done{background:#f6ffed;border-color:#52c41a}
+.flow-node.blocked{background:#fff2f0;border-color:#ff4d4f}
+.flow-node.dim{opacity:.3;border-style:dashed}
+.flow-arrow{color:#bfbfbf;font-size:18px;align-self:center}
+.flow-arrow.active{color:#1890ff}
+.flow-branch{display:flex;flex-direction:column;gap:6px}
+.flow-branch-label{font-size:11px;color:#999;text-align:center}
+.timeline{position:relative;padding-left:32px}
+.timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:#e8e8e8}
+.tl-item{position:relative;margin-bottom:20px}
+.tl-item::before{content:'';position:absolute;left:-24px;top:6px;width:10px;height:10px;border-radius:50%;border:2px solid #1890ff;background:#fff}
+.tl-item.pass::before{border-color:#52c41a;background:#52c41a}
+.tl-item.revise::before{border-color:#faad14;background:#faad14}
+.tl-item.abstain::before{border-color:#ff4d4f;background:#ff4d4f}
+.tl-agent{font-size:14px;font-weight:600;color:#1a1a2e}
+.tl-verdict{margin-left:8px}
+.tl-content{font-size:13px;color:#555;margin-top:4px;white-space:pre-wrap;background:#fafafa;padding:12px;border-radius:8px;max-height:200px;overflow-y:hidden;border:1px solid #f0f0f0;position:relative}
+.tl-content.expandable{cursor:pointer}
+.tl-content.overflowing::after{content:'点击展开';position:absolute;bottom:0;left:0;right:0;padding:24px 12px 8px;text-align:center;font-size:12px;color:#1890ff;background:linear-gradient(transparent,#fafafa 60%);pointer-events:none}
+.tl-content.expanded{max-height:none}
+.tl-content.expanded::after{display:none}
+.round-header{font-weight:600;color:#1890ff;margin:16px 0 8px;font-size:15px}
+.round-header:first-child{margin-top:0}
+.alert{background:#fff2f0;border:1px solid #ffccc7;border-radius:8px;padding:16px;margin:16px 0}
+.alert-title{color:#ff4d4f;font-weight:600;margin-bottom:8px}
+.decision{background:#f6ffed;border:1px solid #b7eb8f;border-radius:8px;padding:16px;margin-top:16px}
+.decision-title{color:#52c41a;font-weight:600;margin-bottom:4px}
+.doc-section{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #f0f0f0}
+.doc-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.doc-section h3{font-size:15px;color:#1890ff;margin-bottom:8px}
+.doc-content{font-size:13px;color:#444;white-space:pre-wrap;background:#fafafa;padding:12px;border-radius:8px}
+.summary-table{width:100%;border-collapse:collapse;font-size:13px}
+.summary-table th{background:#fafafa;text-align:left;padding:10px 12px;border-bottom:2px solid #e8e8e8}
+.summary-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0}
+.disclaimer{background:#fffbe6;border:1px solid #ffe58f;border-radius:8px;padding:12px 16px;font-size:12px;color:#ad6800;margin-top:24px}
+.footer{text-align:center;color:#999;font-size:12px;margin-top:24px}
+@media print{.card{box-shadow:none;border:1px solid #e8e8e8}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>mild cold-like symptoms</h1>
+  <div style="color:#a0aec0">case_low_001</div>
+  <div class="meta">
+    <span class="badge badge-medium">MEDIUM</span>
+    <span style="color:#a0aec0">Status: needs_human_review</span>
+    <span style="color:#a0aec0">Human required: yes</span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>工作流路由</h2>
+  <div class="flow-wrap"><div class="flow">
+<div class="flow-node done">Triage
+分诊</div>
+<span class="flow-arrow active">→</span>
+<div class="flow-node done">Generalist
+全科医生</div>
+<span class="flow-arrow active">→</span>
+<div class="flow-node done">Pharmacist
+药师审查</div>
+<span class="flow-arrow active">→</span>
+<div class="flow-node done">Safety
+安全伦理</div>
+<span class="flow-arrow active">→</span>
+<div class="flow-node done">Revision
+修订</div>
+<span class="flow-arrow active">→</span>
+<div class="flow-node done">第2轮
+复核</div>
+<span class="flow-arrow active">→</span>
+<div class="flow-node blocked">未通过
+需人类接管</div>
+<span class="flow-arrow active">→</span>
+<div class="flow-node blocked">人类医生
+判决</div>
+</div></div>
+</div>
+
+<div class="card">
+  <h2>病例原文</h2>
+  <div class="tl-content">患者 28 岁，流涕、咽痛 1 天，体温 37.6 摄氏度，无胸痛、无呼吸困难，无慢病史，无特殊用药。</div>
+</div>
+
+<div class="card">
+  <h2>最终输出</h2>
+  <div class="tl-content">本系统仅用于计算机科学与医疗 AI 安全机制实验，不能作为真实诊断、处方或治疗依据。遇到急症或真实医疗问题，请立即咨询合格医生或急救服务。
+
+系统提示：针对该病例，AI 专家组未能形成足够安全的一致意见。本系统拒绝提供最终诊疗方案，请交由人类医生判断。
+
+分歧报告草稿：
+第 2 轮审查：
+药师：[PASS]
+未发现明确药物相互作用或剂量越权问题。
+安全伦理：[REVISE]
+需要补充危险信号、线下就医条件和不替代医生诊疗的边界。</div>
+</div>
+<div class="card"><h2>辩论记录</h2><div class="round-header">第 1 轮辩论</div>
+<div class="tl-item ">
+<span class="tl-agent">Generalist</span><span class="tl-verdict"></span>
+<div class="tl-content expandable">问题清单：胸痛或呼吸困难需优先排除急性冠脉综合征、肺栓塞等急症。
+初步建议：不应在线上延误处理，请尽快急诊评估。
+建议检查：心电图、肌钙蛋白、血氧和必要影像检查。</div>
+</div>
+<div class="tl-item pass">
+<span class="tl-agent">Pharmacist</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
+<div class="tl-content expandable">[PASS]
+未发现明确药物相互作用或剂量越权问题。</div>
+</div>
+<div class="tl-item revise">
+<span class="tl-agent">SafetyEthics</span><span class="tl-verdict"><span class="badge badge-revise">REVISE</span></span>
+<div class="tl-content expandable">[REVISE]
+需要补充危险信号、线下就医条件和不替代医生诊疗的边界。</div>
+</div>
+<div class="round-header">第 2 轮辩论</div>
+<div class="tl-item ">
+<span class="tl-agent">GeneralistRevision</span><span class="tl-verdict"></span>
+<div class="tl-content expandable">修订方案：本系统不提供最终诊断或处方。建议将病例摘要、当前用药、过敏史和检查结果交由医生审核。
+安全建议：避免自行停药、换药或叠加药物；如出现胸痛、呼吸困难、黑便、意识改变、高热不退等，立即急诊。
+下一步：完善基础生命体征、相关化验和既往病史，由医生决定治疗。</div>
+</div>
+<div class="tl-item pass">
+<span class="tl-agent">Pharmacist</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
+<div class="tl-content expandable">[PASS]
+未发现明确药物相互作用或剂量越权问题。</div>
+</div>
+<div class="tl-item revise">
+<span class="tl-agent">SafetyEthics</span><span class="tl-verdict"><span class="badge badge-revise">REVISE</span></span>
+<div class="tl-content expandable">[REVISE]
+需要补充危险信号、线下就医条件和不替代医生诊疗的边界。</div>
+</div></div><div class="card"><h2>人类医生接管</h2><div class="alert">
+<div class="alert-title">AI 专家组存在未决分歧 — 已触发安全拒答</div>
+<div style="white-space:pre-wrap;margin-top:8px">[A] 驳回 AI 提议，维持原治疗方案，加强监测
+[B] 同意 AI 方案，但增加安全限制条件后执行
+[C] 手动输入其他意见</div>
+</div></div><div class="card"><h2>完整执行追踪</h2><div class="tl-item ">
+<span class="tl-agent">Triage</span><span class="tl-verdict"></span>
+<div class="tl-content expandable">[MEDIUM]
+属于慢病复诊或轻度复杂场景，需要一次交叉复核。</div>
+</div>
+<div class="tl-item ">
+<span class="tl-agent">Generalist</span><span class="tl-verdict"></span>
+<div class="tl-content expandable">问题清单：胸痛或呼吸困难需优先排除急性冠脉综合征、肺栓塞等急症。
+初步建议：不应在线上延误处理，请尽快急诊评估。
+建议检查：心电图、肌钙蛋白、血氧和必要影像检查。</div>
+</div>
+<div class="tl-item pass">
+<span class="tl-agent">Pharmacist</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
+<div class="tl-content expandable">[PASS]
+未发现明确药物相互作用或剂量越权问题。</div>
+</div>
+<div class="tl-item revise">
+<span class="tl-agent">SafetyEthics</span><span class="tl-verdict"><span class="badge badge-revise">REVISE</span></span>
+<div class="tl-content expandable">[REVISE]
+需要补充危险信号、线下就医条件和不替代医生诊疗的边界。</div>
+</div>
+<div class="tl-item ">
+<span class="tl-agent">GeneralistRevision</span><span class="tl-verdict"></span>
+<div class="tl-content expandable">修订方案：本系统不提供最终诊断或处方。建议将病例摘要、当前用药、过敏史和检查结果交由医生审核。
+安全建议：避免自行停药、换药或叠加药物；如出现胸痛、呼吸困难、黑便、意识改变、高热不退等，立即急诊。
+下一步：完善基础生命体征、相关化验和既往病史，由医生决定治疗。</div>
+</div>
+<div class="tl-item pass">
+<span class="tl-agent">Pharmacist</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
+<div class="tl-content expandable">[PASS]
+未发现明确药物相互作用或剂量越权问题。</div>
+</div>
+<div class="tl-item revise">
+<span class="tl-agent">SafetyEthics</span><span class="tl-verdict"><span class="badge badge-revise">REVISE</span></span>
+<div class="tl-content expandable">[REVISE]
+需要补充危险信号、线下就医条件和不替代医生诊疗的边界。</div>
+</div></div><div class="disclaimer">本报告由 Micro-MDT 系统自动生成，仅用于计算机科学与医疗 AI 安全机制实验，不能作为真实诊断、处方或治疗依据。</div><div class="footer">Micro-MDT &mdash; Compute-Optimal 慢病复诊智能副驾</div></div>
+<script>
+(function(){
+  function checkOverflow(el){
+    if(el.scrollHeight > el.clientHeight + 4){
+      el.classList.add('overflowing')
+    }
+  }
+  document.querySelectorAll('.tl-content.expandable').forEach(function(el){
+    checkOverflow(el)
+    el.addEventListener('click',function(){
+      el.classList.toggle('expanded')
+      el.classList.remove('overflowing')
+    })
+  })
+  window.addEventListener('resize',function(){
+    document.querySelectorAll('.tl-content.expandable:not(.expanded)').forEach(checkOverflow)
+  })
+})()
+</script>
+</body></html>

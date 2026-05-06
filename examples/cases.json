@@ -1,0 +1,75 @@
+[
+  {
+    "case_id": "case_low_001",
+    "title": "mild cold-like symptoms",
+    "expected_difficulty": "LOW",
+    "text": "患者 28 岁，流涕、咽痛 1 天，体温 37.6 摄氏度，无胸痛、无呼吸困难，无慢病史，无特殊用药。"
+  },
+  {
+    "case_id": "case_medium_001",
+    "title": "hypertension follow-up",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 55 岁，高血压复诊，近期家庭血压 145/90 mmHg 左右，无胸痛、无呼吸困难。当前规律服药，希望了解是否需要调整生活方式和复诊检查。"
+  },
+  {
+    "case_id": "case_high_001",
+    "title": "anticoagulant with fever and headache",
+    "expected_difficulty": "HIGH",
+    "text": "患者 72 岁，因房颤长期服用华法林，近 2 天发热头痛，家属想自行加用止痛药。既往有胃出血史，今天大便颜色偏黑。"
+  },
+  {
+    "case_id": "case_high_002",
+    "title": "diabetes with reduced kidney function",
+    "expected_difficulty": "HIGH",
+    "text": "患者 63 岁，糖尿病复诊，近期血糖升高，化验提示 eGFR 38，伴轻度下肢水肿。当前多种降糖降压药并用，担心肾功能继续下降。"
+  },
+  {
+    "case_id": "case_high_003",
+    "title": "chest pain and dyspnea",
+    "expected_difficulty": "HIGH",
+    "text": "患者 61 岁，突发胸痛 40 分钟，伴出汗和呼吸困难，有高血压史。家属询问是否可以先在家观察。"
+  },
+
+  {
+    "case_id": "dm_stable_001",
+    "title": "糖尿病稳定复诊 (Level 1)",
+    "expected_difficulty": "LOW",
+    "text": "患者 52 岁，2 型糖尿病复诊。近 3 个月空腹血糖 6.1-6.5 mmol/L，餐后 8.0-8.5 mmol/L，HbA1c 6.8%。目前口服二甲双胍 500mg bid，无低血糖发作，无新发症状，体重稳定。希望确认是否需要调整方案。"
+  },
+  {
+    "case_id": "dm_mild_002",
+    "title": "糖尿病轻度异常 (Level 2)",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 58 岁，2 型糖尿病复诊。近 1 月空腹血糖 8.0-9.5 mmol/L，餐后 11-13 mmol/L，HbA1c 从半年前 7.2% 升至 8.5%。目前口服二甲双胍 850mg bid + 格列齐特 80mg qd。患者反映偶有头晕、乏力，无胸痛。希望调整降糖方案。"
+  },
+  {
+    "case_id": "dm_high_003",
+    "title": "糖尿病合并肾功能下降 (Level 3)",
+    "expected_difficulty": "HIGH",
+    "text": "患者 63 岁，2 型糖尿病 10 年，伴高血压。近期化验：空腹血糖 11.2 mmol/L，HbA1c 9.1%，血肌酐 176 μmol/L（eGFR 34），尿蛋白 ++，下肢轻度水肿。当前用药：二甲双胍 850mg tid + 格列本脲 5mg bid + 厄贝沙坦 150mg qd。患者担心肾功能恶化，希望调整用药但不想使用胰岛素。"
+  },
+  {
+    "case_id": "htn_stable_004",
+    "title": "高血压稳定复诊 (Level 1)",
+    "expected_difficulty": "LOW",
+    "text": "患者 48 岁，原发性高血压 3 年复诊。近半年家庭自测血压 125-132/78-84 mmHg，无头晕、无胸痛、无水肿。当前口服氨氯地平 5mg qd，规律服药，无不适。询问是否可以减量或停药。"
+  },
+  {
+    "case_id": "htn_mild_005",
+    "title": "高血压伴轻度异常 (Level 2)",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 56 岁，高血压复诊。近 2 周家庭血压 155-162/92-98 mmHg，较前明显升高。目前口服硝苯地平控释片 30mg qd + 厄贝沙坦 150mg qd，近期因工作压力大睡眠不佳，偶有晨起头痛。无胸痛、无呼吸困难。希望调整降压方案。"
+  },
+  {
+    "case_id": "htn_high_006",
+    "title": "高血压合并心衰风险 (Level 3)",
+    "expected_difficulty": "HIGH",
+    "text": "患者 65 岁，高血压 15 年，近 1 月出现活动后气喘、夜间不能平卧，双下肢凹陷性水肿。血压 168/96 mmHg，心率 96 次/分。当前用药：硝苯地平 30mg qd + 卡托普利 25mg tid + 呋塞米 20mg qd。患者同时服用华法林（房颤史）。家属询问能否自行增加利尿剂剂量。"
+  },
+  {
+    "case_id": "poly_high_007",
+    "title": "多重慢病用药冲突 (Level 3)",
+    "expected_difficulty": "HIGH",
+    "text": "患者 71 岁，同时患有 2 型糖尿病、高血压、冠心病（支架术后 6 个月）、痛风。当前用药：阿司匹林 100mg qd + 氯吡格雷 75mg qd + 二甲双胍 500mg bid + 格列美脲 2mg qd + 氨氯地平 5mg qd + 阿托伐他汀 20mg qn。近 3 天因痛风急性发作，家属自行加用吲哚美辛（非甾体抗炎药）。患者今晨出现上腹隐痛、黑便一次。"
+  }
+]
