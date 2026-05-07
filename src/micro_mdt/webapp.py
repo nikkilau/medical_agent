@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import json
+import traceback
 import uuid
+import webbrowser
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from .io import load_case_from_text
@@ -137,13 +139,23 @@ async function submitCase(){
     const data=await resp.json();
     hideProgress();
     document.getElementById('btn-submit').disabled=false;
+    if(!resp.ok){
+      showError(data.error||'未知错误');
+      return;
+    }
     currentSession=data.session_id;
     renderResult(data);
   }catch(e){
     hideProgress();
     document.getElementById('btn-submit').disabled=false;
-    alert('请求失败: '+e.message);
+    showError('网络请求失败: '+e.message);
   }
+}
+
+function showError(msg){
+  const area=document.getElementById('result-area');
+  area.classList.remove('hidden');
+  area.innerHTML='<div class="card" style="border:2px solid #ff4d4f"><h2 style="color:#ff4d4f">错误</h2><pre style="white-space:pre-wrap;font-size:13px">'+escapeHtml(msg)+'</pre></div>';
 }
 
 function renderResult(data){
@@ -237,16 +249,17 @@ function renderOptions(optionsText){
   if(!list) return;
   const lines=optionsText.split('\n').filter(l=>l.trim().startsWith('['));
   let html='';
-  for(const line of lines){
-    html+=`<button class="option-btn" onclick="selectOption(this,'${escapeHtml(line.replace(/'/g,"\\'"))}')">${escapeHtml(line)}</button>`;
+  for(let i=0;i<lines.length;i++){
+    html+=`<button class="option-btn" data-idx="${i}">${escapeHtml(lines[i])}</button>`;
   }
   list.innerHTML=html;
-}
-
-function selectOption(btn,text){
-  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
-  document.getElementById('custom-decision').value=text;
+  list.querySelectorAll('.option-btn').forEach(function(btn,i){
+    btn.addEventListener('click',function(){
+      list.querySelectorAll('.option-btn').forEach(function(b){b.classList.remove('selected');});
+      btn.classList.add('selected');
+      document.getElementById('custom-decision').value=lines[i];
+    });
+  });
 }
 
 async function submitDecision(){
@@ -296,7 +309,8 @@ class Handler(BaseHTTPRequestHandler):
     provider: "MockProvider | OpenAICompatibleProvider" = MockProvider()
 
     def log_message(self, fmt, *args):
-        pass
+        if args:
+            print(f"[{self.address_string()}] {fmt % args}", flush=True)
 
     def _json(self, data: dict, status: int = 200):
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
@@ -354,7 +368,21 @@ class Handler(BaseHTTPRequestHandler):
             _SESSIONS[session_id]["result"] = result
             return None
 
-        result = workflow.run_case(case, human_decision_callback=human_callback)
+        try:
+            result = workflow.run_case(case, human_decision_callback=human_callback)
+        except Exception as exc:
+            _SESSIONS.pop(session_id, None)
+            tb = traceback.format_exc()
+            msg = str(exc)
+            if "401" in msg or "Unauthorized" in msg:
+                msg = "API Key 无效或未设置，请设置 MICRO_MDT_API_KEY 环境变量后重启。或使用 --provider mock 启动。"
+            elif "404" in msg:
+                msg = f"API 端点不存在，请检查 MICRO_MDT_BASE_URL 设置（当前: {getattr(self.provider, 'base_url', 'N/A')}）。"
+            elif "Connection" in msg or "refused" in msg.lower():
+                msg = "无法连接到 API 服务，请检查网络或 MICRO_MDT_BASE_URL。"
+            print(tb, flush=True)
+            return self._json({"error": msg, "traceback": tb}, 500)
+
         _SESSIONS[session_id]["result"] = result
 
         if result.human_required and not result.human_decision:
@@ -458,12 +486,16 @@ def run_server(port: int = 8080, provider: str = "mock"):
     else:
         Handler.provider = MockProvider()
 
-    server = HTTPServer(("127.0.0.1", port), Handler)
-    print(f"Micro-MDT Web App running at http://127.0.0.1:{port}")
-    print("Open your browser and navigate to the address above.")
-    print("Press Ctrl+C to stop.")
+    class ReusableServer(HTTPServer):
+        allow_reuse_address = True
+
+    server = ReusableServer(("", port), Handler)
+    url = f"http://localhost:{port}"
+    print(f"Micro-MDT Web App running at {url}", flush=True)
+    print(f"Press Ctrl+C to stop.", flush=True)
+    webbrowser.open(url)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\nShutting down.")
+        print("\nShutting down.", flush=True)
         server.server_close()

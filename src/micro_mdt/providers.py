@@ -189,6 +189,8 @@ class OpenAICompatibleProvider(LLMProvider):
         self.timeout = timeout
         if not self.api_key:
             raise ValueError("Missing API key. Set MICRO_MDT_API_KEY or OPENAI_API_KEY.")
+        self._endpoint = f"{self.base_url}/chat/completions"
+        print(f"[LLM Provider] model={self.model}, endpoint={self._endpoint}", flush=True)
 
     def complete(self, messages: list[LLMMessage], *, temperature: float = 0.2) -> str:
         payload = {
@@ -196,15 +198,29 @@ class OpenAICompatibleProvider(LLMProvider):
             "messages": [{"role": m.role, "content": m.content} for m in messages],
             "temperature": temperature,
         }
+        data = json.dumps(payload).encode("utf-8")
         request = urllib.request.Request(
-            f"{self.base_url}/chat/completions",
-            data=json.dumps(payload).encode("utf-8"),
+            self._endpoint,
+            data=data,
             headers={
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
             },
             method="POST",
         )
-        with urllib.request.urlopen(request, timeout=self.timeout) as response:
-            data = json.loads(response.read().decode("utf-8"))
-        return data["choices"][0]["message"]["content"]
+        try:
+            with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                body = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", errors="replace")
+            raise RuntimeError(
+                f"API error {e.code}: {e.reason}. "
+                f"Response: {detail[:500]}. "
+                f"Check model name '{self.model}' is valid at {self.base_url}"
+            ) from e
+        except urllib.error.URLError as e:
+            raise RuntimeError(
+                f"Cannot reach {self._endpoint}: {e.reason}. "
+                f"Check network and MICRO_MDT_BASE_URL."
+            ) from e
+        return body["choices"][0]["message"]["content"]
