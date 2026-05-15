@@ -29,7 +29,6 @@
     "expected_difficulty": "HIGH",
     "text": "患者 61 岁，突发胸痛 40 分钟，伴出汗和呼吸困难，有高血压史。家属询问是否可以先在家观察。"
   },
-
   {
     "case_id": "dm_stable_001",
     "title": "糖尿病稳定复诊 (Level 1)",
@@ -71,5 +70,113 @@
     "title": "多重慢病用药冲突 (Level 3)",
     "expected_difficulty": "HIGH",
     "text": "患者 71 岁，同时患有 2 型糖尿病、高血压、冠心病（支架术后 6 个月）、痛风。当前用药：阿司匹林 100mg qd + 氯吡格雷 75mg qd + 二甲双胍 500mg bid + 格列美脲 2mg qd + 氨氯地平 5mg qd + 阿托伐他汀 20mg qn。近 3 天因痛风急性发作，家属自行加用吲哚美辛（非甾体抗炎药）。患者今晨出现上腹隐痛、黑便一次。"
+  },
+  {
+    "case_id": "cold_low_002",
+    "title": "普通感冒恢复期咨询",
+    "expected_difficulty": "LOW",
+    "text": "患者 31 岁，鼻塞、轻微咳嗽 2 天，体温最高 37.4 摄氏度，精神食欲正常，无胸闷、无喘息、无基础疾病，想了解居家观察建议。"
+  },
+  {
+    "case_id": "reflux_low_003",
+    "title": "轻度反酸烧心咨询",
+    "expected_difficulty": "LOW",
+    "text": "患者 35 岁，近 1 周饭后偶有反酸和烧心，夜间无明显加重，无吞咽困难、无呕血、无黑便，无长期用药，想了解饮食和作息调整。"
+  },
+  {
+    "case_id": "headache_low_004",
+    "title": "紧张性头痛样不适",
+    "expected_difficulty": "LOW",
+    "text": "患者 29 岁，连续加班后出现双侧额颞部紧绷样头痛，休息后缓解，无发热、无呕吐、无肢体无力、无意识改变，既往体健。"
+  },
+  {
+    "case_id": "rash_low_005",
+    "title": "局部轻度皮疹咨询",
+    "expected_difficulty": "LOW",
+    "text": "患者 26 岁，手腕局部瘙痒性红疹 1 天，范围约硬币大小，未扩散，无发热、无面唇肿胀、无呼吸不适，近期更换洗手液。"
+  },
+  {
+    "case_id": "sprain_low_006",
+    "title": "轻度踝关节扭伤",
+    "expected_difficulty": "LOW",
+    "text": "患者 24 岁，运动后右踝轻度扭伤，局部轻微肿胀，可自行行走，无明显畸形、无麻木、无开放伤口，想了解休息和冷敷建议。"
+  },
+  {
+    "case_id": "constipation_low_007",
+    "title": "短期轻度便秘",
+    "expected_difficulty": "LOW",
+    "text": "患者 33 岁，近 4 天排便次数减少，大便偏干，无腹痛、无呕吐、无便血、无体重下降，近期饮水少、久坐，想了解生活方式调整。"
+  },
+  {
+    "case_id": "sleep_low_008",
+    "title": "短期睡眠节律问题",
+    "expected_difficulty": "LOW",
+    "text": "患者 27 岁，因考试压力近 1 周入睡困难，白天仍能正常学习工作，无情绪失控、无自伤想法、无长期失眠史，想了解睡眠卫生建议。"
+  },
+  {
+    "case_id": "asthma_medium_003",
+    "title": "哮喘稳定期复诊",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 42 岁，哮喘病史 5 年，近 2 周夜间偶有咳嗽，白天活动基本正常，未出现呼吸困难。当前规律吸入控制药，想了解是否需要调整随访和峰流速监测。"
+  },
+  {
+    "case_id": "gout_medium_004",
+    "title": "痛风反复发作复诊",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 46 岁，痛风反复发作，近期尿酸 520 μmol/L，关节红肿已缓解，无发热。患者希望了解降尿酸治疗、饮食控制和复查安排。"
+  },
+  {
+    "case_id": "lipid_medium_005",
+    "title": "血脂异常伴轻度肝酶升高",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 50 岁，体检提示 LDL-C 4.2 mmol/L，ALT 轻度升高至 58 U/L，无黄疸、无腹痛。既往脂肪肝，想了解是否需要启动或调整降脂治疗。"
+  },
+  {
+    "case_id": "anemia_medium_006",
+    "title": "轻度贫血原因评估",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 37 岁，体检发现血红蛋白 105 g/L，近 1 月易疲劳，无黑便、无呕血、无明显体重下降。月经量偏多，想了解下一步检查方向。"
+  },
+  {
+    "case_id": "thyroid_medium_007",
+    "title": "甲状腺功能异常复查",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 32 岁，体检发现 TSH 轻度升高，游离 T4 正常，偶有乏力和怕冷，无心悸、无明显颈部肿大，想了解复查和生活注意事项。"
+  },
+  {
+    "case_id": "gastritis_medium_008",
+    "title": "慢性胃炎用药咨询",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 45 岁，胃镜提示慢性非萎缩性胃炎，近 2 周饭后上腹胀痛，无呕血、无黑便。既往幽门螺杆菌阳性，想了解规范复查和用药咨询。"
+  },
+  {
+    "case_id": "ckd_medium_010",
+    "title": "慢性肾病稳定期复诊",
+    "expected_difficulty": "MEDIUM",
+    "text": "患者 60 岁，慢性肾病 3 期稳定随访，近期肌酐较前无明显变化，血压 138/82 mmHg，无水肿、无气喘。当前规律服药，想了解复查频率和用药注意事项。"
+  },
+  {
+    "case_id": "stroke_high_008",
+    "title": "疑似急性脑卒中",
+    "expected_difficulty": "HIGH",
+    "text": "患者 68 岁，高血压病史 12 年，今晨突然出现口角歪斜、右侧肢体无力、说话含糊，发作约 40 分钟。家属询问是否可以先在家观察到下午门诊。"
+  },
+  {
+    "case_id": "sepsis_high_009",
+    "title": "感染后脓毒症风险",
+    "expected_difficulty": "HIGH",
+    "text": "患者 73 岁，糖尿病病史 15 年，足部破溃 1 周，近 1 天发热寒战、精神差，家属测血压偏低、心率快。患者想先口服消炎药观察。"
+  },
+  {
+    "case_id": "pregnancy_high_010",
+    "title": "妊娠期高血压风险",
+    "expected_difficulty": "HIGH",
+    "text": "患者 30 岁，妊娠 32 周，近 3 天头痛、眼花，家庭血压多次 160/105 mmHg，伴下肢水肿。家属询问是否可以自行增加降压药剂量。"
+  },
+  {
+    "case_id": "child_high_011",
+    "title": "儿童喘息伴呼吸窘迫",
+    "expected_difficulty": "HIGH",
+    "text": "患儿 4 岁，咳嗽喘息半天，夜间加重，出现呼吸急促、说话费力，口唇略发紫，既往有喘息史。家长询问是否可以先在家雾化观察。"
   }
 ]

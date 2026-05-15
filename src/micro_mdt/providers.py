@@ -23,8 +23,17 @@ class MockProvider(LLMProvider):
         "呼吸困难",
         "肾功能",
         "eGFR",
-        "怀孕",
+        "卒中",
+        "口角歪斜",
+        "肢体无力",
+        "说话含糊",
+        "发热寒战",
+        "血压偏低",
+        "心率快",
         "妊娠",
+        "怀孕",
+        "口唇略发紫",
+        "呼吸急促",
         "华法林",
         "阿司匹林",
         "过敏",
@@ -35,8 +44,48 @@ class MockProvider(LLMProvider):
         "黑便",
         "罕见",
     ]
-    urgent_terms = ["胸痛", "呼吸困难", "黑便", "呕血", "昏迷", "意识改变"]
-    medium_terms = ["糖尿病", "高血压", "复诊", "慢病", "血糖", "血压", "用药调整"]
+    urgent_terms = [
+        "胸痛",
+        "呼吸困难",
+        "黑便",
+        "呕血",
+        "昏迷",
+        "意识改变",
+        "口角歪斜",
+        "肢体无力",
+        "说话含糊",
+        "发热寒战",
+        "血压偏低",
+        "心率快",
+        "妊娠",
+        "口唇略发紫",
+        "呼吸急促",
+    ]
+    medium_terms = [
+        "糖尿病",
+        "高血压",
+        "复诊",
+        "慢病",
+        "血糖",
+        "血压",
+        "用药调整",
+        "哮喘",
+        "痛风",
+        "尿酸",
+        "血脂",
+        "LDL-C",
+        "ALT",
+        "贫血",
+        "血红蛋白",
+        "月经量偏多",
+        "TSH",
+        "甲状腺",
+        "胃镜",
+        "幽门螺杆菌",
+        "慢性肾病",
+        "肌酐",
+    ]
+    stable_low_terms = ["控制平稳", "血糖达标", "血压平稳", "无新发症状", "体重稳定", "规律服药，无不适"]
 
     def complete(self, messages: list[LLMMessage], *, temperature: float = 0.2) -> str:
         system = messages[0].content if messages else ""
@@ -59,7 +108,9 @@ class MockProvider(LLMProvider):
     def _triage(self, text: str) -> str:
         if self._has_any_unnegated(text, self.high_risk_terms):
             return "[HIGH]\n存在高危症状、特殊人群或复杂用药，需要 MDT 辩论和安全审查。"
-        if any(term in text for term in self.medium_terms):
+        if any(term in text for term in self.stable_low_terms):
+            return "[LOW]\n慢病指标或症状描述稳定，适合低算力随访建议路径。"
+        if self._has_any_unnegated(text, self.medium_terms):
             return "[MEDIUM]\n属于慢病复诊或轻度复杂场景，需要一次交叉复核。"
         return "[LOW]\n描述更接近常见轻症，先走低算力路径。"
 
@@ -76,7 +127,7 @@ class MockProvider(LLMProvider):
                 "初步建议：暂不建议自行增加或更换降糖降压药；需要医生结合 eGFR、尿蛋白和电解质评估。\n"
                 "建议检查：肾功能、电解质、尿白蛋白肌酐比，并评估心血管风险。"
             )
-        if "胸痛" in text or "呼吸困难" in text:
+        if self._has_any_unnegated(text, ["胸痛", "呼吸困难"]):
             return (
                 "问题清单：胸痛或呼吸困难需优先排除急性冠脉综合征、肺栓塞等急症。\n"
                 "初步建议：不应在线上延误处理，请尽快急诊评估。\n"
@@ -119,8 +170,8 @@ class MockProvider(LLMProvider):
                 index = lowered.find(term_lower, start)
                 if index == -1:
                     break
-                prefix = text[max(0, index - 3):index]
-                if not any(marker in prefix for marker in ("无", "否认", "没有", "未见")):
+                prefix = text[max(0, index - 4):index]
+                if not any(marker in prefix for marker in ("无", "否认", "没有", "未见", "未出现")):
                     return True
                 start = index + len(term_lower)
         return False

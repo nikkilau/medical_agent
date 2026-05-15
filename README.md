@@ -52,7 +52,39 @@ python -m micro_mdt.cli --case "患者 70 岁，胸痛伴呼吸困难 30 分钟�
 
 ## 使用真实模型
 
-设置 OpenAI-compatible 环境变量：
+本项目启动时会自动读取项目根目录的 `.env` 文件，也仍然支持直接使用系统环境变量。不要把真实 API key 提交到仓库。
+
+推荐先复制环境模板：
+
+```powershell
+copy .env.example .env
+```
+
+然后在 `.env` 中填入自己的 DeepSeek 或其他 OpenAI-compatible 服务配置：
+
+```env
+MICRO_MDT_API_KEY=your_deepseek_api_key_here
+MICRO_MDT_BASE_URL=https://api.deepseek.com/v1
+MICRO_MDT_MODEL=deepseek-chat
+```
+
+Windows PowerShell 启动命令：
+
+```powershell
+$env:PYTHONPATH="src"
+python -m micro_mdt.cli --provider openai-compatible --case-id case_high_001
+python -m micro_mdt.cli --web --provider openai-compatible
+```
+
+Windows CMD 启动命令：
+
+```bat
+set PYTHONPATH=src
+python -m micro_mdt.cli --provider openai-compatible --case-id case_high_001
+python -m micro_mdt.cli --web --provider openai-compatible
+```
+
+也可以不用 `.env`，直接设置环境变量：
 
 ```powershell
 $env:MICRO_MDT_API_KEY="你的 API key"
@@ -62,7 +94,7 @@ $env:PYTHONPATH="src"
 python -m micro_mdt.cli --provider openai-compatible --case-id case_high_001
 ```
 
-DeepSeek、Qwen 等服务如果兼容 OpenAI Chat Completions，也可以替换 `MICRO_MDT_BASE_URL` 和 `MICRO_MDT_MODEL`。
+DeepSeek、Qwen 等服务如果兼容 OpenAI Chat Completions，也可以替换 `MICRO_MDT_BASE_URL` 和 `MICRO_MDT_MODEL`。注意 provider 名称必须写完整：`openai-compatible`。
 
 ## 测试
 

@@ -480,9 +480,14 @@ class Handler(BaseHTTPRequestHandler):
         return out
 
 
-def run_server(port: int = 8080, provider: str = "mock"):
+def run_server(
+    port: int = 8080,
+    provider: str = "mock",
+    base_url: str | None = None,
+    model: str | None = None,
+):
     if provider == "openai-compatible":
-        Handler.provider = OpenAICompatibleProvider()
+        Handler.provider = OpenAICompatibleProvider(base_url=base_url, model=model)
     else:
         Handler.provider = MockProvider()
 

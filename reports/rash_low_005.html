@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Micro-MDT — htn_mild_005</title>
+<title>Micro-MDT — rash_low_005</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#1a1a2e;line-height:1.6}
@@ -67,11 +67,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#1a1a2
 <div class="container">
 
 <div class="header">
-  <h1>高血压伴轻度异常 (Level 2)</h1>
-  <div style="color:#a0aec0">htn_mild_005</div>
+  <h1>局部轻度皮疹咨询</h1>
+  <div style="color:#a0aec0">rash_low_005</div>
   <div class="meta">
-    <span class="badge badge-medium">MEDIUM</span>
-    <span style="color:#a0aec0">Status: completed_medium_reviewed</span>
+    <span class="badge badge-low">LOW</span>
+    <span style="color:#a0aec0">Status: completed_low_compute</span>
     <span style="color:#a0aec0">Human required: no</span>
   </div>
 </div>
@@ -85,68 +85,34 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#1a1a2
 <div class="flow-node done">Generalist
 全科医生</div>
 <span class="flow-arrow active">→</span>
-<div class="flow-node done">Pharmacist
-药师审查</div>
-<span class="flow-arrow active">→</span>
-<div class="flow-node done">Safety
-安全伦理</div>
-<span class="flow-arrow active">→</span>
-<div class="flow-node done">共识达成
-输出方案</div>
+<div class="flow-node done">输出
+建议</div>
 </div></div>
 </div>
 
 <div class="card">
   <h2>病例原文</h2>
-  <div class="tl-content">患者 56 岁，高血压复诊。近 2 周家庭血压 155-162/92-98 mmHg，较前明显升高。目前口服硝苯地平控释片 30mg qd + 厄贝沙坦 150mg qd，近期因工作压力大睡眠不佳，偶有晨起头痛。无胸痛、无呼吸困难。希望调整降压方案。</div>
+  <div class="tl-content">患者 26 岁，手腕局部瘙痒性红疹 1 天，范围约硬币大小，未扩散，无发热、无面唇肿胀、无呼吸不适，近期更换洗手液。</div>
 </div>
 
 <div class="card">
   <h2>最终输出</h2>
   <div class="tl-content">本系统仅用于计算机科学与医疗 AI 安全机制实验，不能作为真实诊断、处方或治疗依据。遇到急症或真实医疗问题，请立即咨询合格医生或急救服务。
 
-已完成一次交叉复核。
-
 问题清单：常见上呼吸道感染或轻症不适可能。
 初步建议：休息、补液、观察体温和症状变化；避免自行使用抗生素。
 如高热不退、胸痛、呼吸困难、意识异常或症状加重，应线下就医。</div>
 </div>
-<div class="card"><h2>辩论记录</h2><div class="round-header">第 1 轮辩论</div>
-<div class="tl-item ">
-<span class="tl-agent">Generalist</span><span class="tl-verdict"></span>
-<div class="tl-content expandable">问题清单：常见上呼吸道感染或轻症不适可能。
-初步建议：休息、补液、观察体温和症状变化；避免自行使用抗生素。
-如高热不退、胸痛、呼吸困难、意识异常或症状加重，应线下就医。</div>
-</div>
-<div class="tl-item pass">
-<span class="tl-agent">Pharmacist</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
-<div class="tl-content expandable">[PASS]
-未发现明确药物相互作用或剂量越权问题。</div>
-</div>
-<div class="tl-item pass">
-<span class="tl-agent">SafetyEthics</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
-<div class="tl-content expandable">[PASS]
-方案保持保守并设置了就医条件。</div>
-</div></div><div class="card"><h2>完整执行追踪</h2><div class="tl-item ">
+<div class="card"><h2>完整执行追踪</h2><div class="tl-item ">
 <span class="tl-agent">Triage</span><span class="tl-verdict"></span>
-<div class="tl-content expandable">[MEDIUM]
-属于慢病复诊或轻度复杂场景，需要一次交叉复核。</div>
+<div class="tl-content expandable">[LOW]
+描述更接近常见轻症，先走低算力路径。</div>
 </div>
 <div class="tl-item ">
 <span class="tl-agent">Generalist</span><span class="tl-verdict"></span>
 <div class="tl-content expandable">问题清单：常见上呼吸道感染或轻症不适可能。
 初步建议：休息、补液、观察体温和症状变化；避免自行使用抗生素。
 如高热不退、胸痛、呼吸困难、意识异常或症状加重，应线下就医。</div>
-</div>
-<div class="tl-item pass">
-<span class="tl-agent">Pharmacist</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
-<div class="tl-content expandable">[PASS]
-未发现明确药物相互作用或剂量越权问题。</div>
-</div>
-<div class="tl-item pass">
-<span class="tl-agent">SafetyEthics</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
-<div class="tl-content expandable">[PASS]
-方案保持保守并设置了就医条件。</div>
 </div></div><div class="disclaimer">本报告由 Micro-MDT 系统自动生成，仅用于计算机科学与医疗 AI 安全机制实验，不能作为真实诊断、处方或治疗依据。</div><div class="footer">Micro-MDT &mdash; Compute-Optimal 慢病复诊智能副驾</div></div>
 <script>
 (function(){

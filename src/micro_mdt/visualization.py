@@ -331,6 +331,8 @@ def render_summary_html(results: list[MDTResult]) -> str:
             "</tr>"
         )
 
+    rows_html = "\n".join(rows)
+
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -349,7 +351,7 @@ def render_summary_html(results: list[MDTResult]) -> str:
   <h2>结果总览</h2>
   <table class="summary-table">
   <tr><th>#</th><th>Case ID</th><th>标题</th><th>难度</th><th>状态</th><th>需人类接管</th></tr>
-  {"\n".join(rows)}
+  {rows_html}
   </table>
 </div>
 <div class="disclaimer">

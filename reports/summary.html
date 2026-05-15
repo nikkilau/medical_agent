@@ -67,24 +67,42 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#1a1a2
 <div class="container">
 <div class="header">
   <h1>Micro-MDT 运行摘要</h1>
-  <div style="color:#a0aec0">总计 12 个病例</div>
+  <div style="color:#a0aec0">总计 30 个病例</div>
 </div>
 <div class="card">
   <h2>结果总览</h2>
   <table class="summary-table">
   <tr><th>#</th><th>Case ID</th><th>标题</th><th>难度</th><th>状态</th><th>需人类接管</th></tr>
-  <tr><td>1</td><td><strong>case_low_001</strong></td><td>mild cold-like symptoms</td><td><span class="badge badge-medium">MEDIUM</span></td><td>needs_human_review</td><td>yes</td></tr>
-<tr><td>2</td><td><strong>case_medium_001</strong></td><td>hypertension follow-up</td><td><span class="badge badge-medium">MEDIUM</span></td><td>needs_human_review</td><td>yes</td></tr>
+  <tr><td>1</td><td><strong>case_low_001</strong></td><td>mild cold-like symptoms</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>2</td><td><strong>case_medium_001</strong></td><td>hypertension follow-up</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
 <tr><td>3</td><td><strong>case_high_001</strong></td><td>anticoagulant with fever and headache</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
 <tr><td>4</td><td><strong>case_high_002</strong></td><td>diabetes with reduced kidney function</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
 <tr><td>5</td><td><strong>case_high_003</strong></td><td>chest pain and dyspnea</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
-<tr><td>6</td><td><strong>dm_stable_001</strong></td><td>糖尿病稳定复诊 (Level 1)</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
-<tr><td>7</td><td><strong>dm_mild_002</strong></td><td>糖尿病轻度异常 (Level 2)</td><td><span class="badge badge-medium">MEDIUM</span></td><td>needs_human_review</td><td>yes</td></tr>
+<tr><td>6</td><td><strong>dm_stable_001</strong></td><td>糖尿病稳定复诊 (Level 1)</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>7</td><td><strong>dm_mild_002</strong></td><td>糖尿病轻度异常 (Level 2)</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
 <tr><td>8</td><td><strong>dm_high_003</strong></td><td>糖尿病合并肾功能下降 (Level 3)</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
-<tr><td>9</td><td><strong>htn_stable_004</strong></td><td>高血压稳定复诊 (Level 1)</td><td><span class="badge badge-medium">MEDIUM</span></td><td>needs_human_review</td><td>yes</td></tr>
-<tr><td>10</td><td><strong>htn_mild_005</strong></td><td>高血压伴轻度异常 (Level 2)</td><td><span class="badge badge-medium">MEDIUM</span></td><td>needs_human_review</td><td>yes</td></tr>
+<tr><td>9</td><td><strong>htn_stable_004</strong></td><td>高血压稳定复诊 (Level 1)</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>10</td><td><strong>htn_mild_005</strong></td><td>高血压伴轻度异常 (Level 2)</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
 <tr><td>11</td><td><strong>htn_high_006</strong></td><td>高血压合并心衰风险 (Level 3)</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
 <tr><td>12</td><td><strong>poly_high_007</strong></td><td>多重慢病用药冲突 (Level 3)</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
+<tr><td>13</td><td><strong>cold_low_002</strong></td><td>普通感冒恢复期咨询</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>14</td><td><strong>reflux_low_003</strong></td><td>轻度反酸烧心咨询</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>15</td><td><strong>headache_low_004</strong></td><td>紧张性头痛样不适</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>16</td><td><strong>rash_low_005</strong></td><td>局部轻度皮疹咨询</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>17</td><td><strong>sprain_low_006</strong></td><td>轻度踝关节扭伤</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>18</td><td><strong>constipation_low_007</strong></td><td>短期轻度便秘</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>19</td><td><strong>sleep_low_008</strong></td><td>短期睡眠节律问题</td><td><span class="badge badge-low">LOW</span></td><td>completed_low_compute</td><td>no</td></tr>
+<tr><td>20</td><td><strong>asthma_medium_003</strong></td><td>哮喘稳定期复诊</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
+<tr><td>21</td><td><strong>gout_medium_004</strong></td><td>痛风反复发作复诊</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
+<tr><td>22</td><td><strong>lipid_medium_005</strong></td><td>血脂异常伴轻度肝酶升高</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
+<tr><td>23</td><td><strong>anemia_medium_006</strong></td><td>轻度贫血原因评估</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
+<tr><td>24</td><td><strong>thyroid_medium_007</strong></td><td>甲状腺功能异常复查</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
+<tr><td>25</td><td><strong>gastritis_medium_008</strong></td><td>慢性胃炎用药咨询</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
+<tr><td>26</td><td><strong>ckd_medium_010</strong></td><td>慢性肾病稳定期复诊</td><td><span class="badge badge-medium">MEDIUM</span></td><td>completed_medium_reviewed</td><td>no</td></tr>
+<tr><td>27</td><td><strong>stroke_high_008</strong></td><td>疑似急性脑卒中</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
+<tr><td>28</td><td><strong>sepsis_high_009</strong></td><td>感染后脓毒症风险</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
+<tr><td>29</td><td><strong>pregnancy_high_010</strong></td><td>妊娠期高血压风险</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
+<tr><td>30</td><td><strong>child_high_011</strong></td><td>儿童喘息伴呼吸窘迫</td><td><span class="badge badge-high">HIGH</span></td><td>abstained_needs_human</td><td>yes</td></tr>
   </table>
 </div>
 <div class="disclaimer">

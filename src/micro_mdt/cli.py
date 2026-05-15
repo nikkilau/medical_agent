@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from .config import load_env_file
 from .io import load_case_from_text, load_cases
 from .providers import MockProvider, OpenAICompatibleProvider
 from .reporting import render_result, render_summary
@@ -40,10 +41,16 @@ def make_provider(args: argparse.Namespace):
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    load_env_file()
 
     if args.web:
         from .webapp import run_server
-        run_server(port=args.port, provider=args.provider)
+        run_server(
+            port=args.port,
+            provider=args.provider,
+            base_url=args.base_url,
+            model=args.model,
+        )
         return 0
 
     provider = make_provider(args)

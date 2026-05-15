@@ -70,8 +70,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#1a1a2
   <h1>糖尿病稳定复诊 (Level 1)</h1>
   <div style="color:#a0aec0">dm_stable_001</div>
   <div class="meta">
-    <span class="badge badge-medium">MEDIUM</span>
-    <span style="color:#a0aec0">Status: completed_medium_reviewed</span>
+    <span class="badge badge-low">LOW</span>
+    <span style="color:#a0aec0">Status: completed_low_compute</span>
     <span style="color:#a0aec0">Human required: no</span>
   </div>
 </div>
@@ -85,14 +85,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#1a1a2
 <div class="flow-node done">Generalist
 全科医生</div>
 <span class="flow-arrow active">→</span>
-<div class="flow-node done">Pharmacist
-药师审查</div>
-<span class="flow-arrow active">→</span>
-<div class="flow-node done">Safety
-安全伦理</div>
-<span class="flow-arrow active">→</span>
-<div class="flow-node done">共识达成
-输出方案</div>
+<div class="flow-node done">输出
+建议</div>
 </div></div>
 </div>
 
@@ -105,48 +99,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#1a1a2
   <h2>最终输出</h2>
   <div class="tl-content">本系统仅用于计算机科学与医疗 AI 安全机制实验，不能作为真实诊断、处方或治疗依据。遇到急症或真实医疗问题，请立即咨询合格医生或急救服务。
 
-已完成一次交叉复核。
-
 问题清单：常见上呼吸道感染或轻症不适可能。
 初步建议：休息、补液、观察体温和症状变化；避免自行使用抗生素。
 如高热不退、胸痛、呼吸困难、意识异常或症状加重，应线下就医。</div>
 </div>
-<div class="card"><h2>辩论记录</h2><div class="round-header">第 1 轮辩论</div>
-<div class="tl-item ">
-<span class="tl-agent">Generalist</span><span class="tl-verdict"></span>
-<div class="tl-content expandable">问题清单：常见上呼吸道感染或轻症不适可能。
-初步建议：休息、补液、观察体温和症状变化；避免自行使用抗生素。
-如高热不退、胸痛、呼吸困难、意识异常或症状加重，应线下就医。</div>
-</div>
-<div class="tl-item pass">
-<span class="tl-agent">Pharmacist</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
-<div class="tl-content expandable">[PASS]
-未发现明确药物相互作用或剂量越权问题。</div>
-</div>
-<div class="tl-item pass">
-<span class="tl-agent">SafetyEthics</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
-<div class="tl-content expandable">[PASS]
-方案保持保守并设置了就医条件。</div>
-</div></div><div class="card"><h2>完整执行追踪</h2><div class="tl-item ">
+<div class="card"><h2>完整执行追踪</h2><div class="tl-item ">
 <span class="tl-agent">Triage</span><span class="tl-verdict"></span>
-<div class="tl-content expandable">[MEDIUM]
-属于慢病复诊或轻度复杂场景，需要一次交叉复核。</div>
+<div class="tl-content expandable">[LOW]
+慢病指标或症状描述稳定，适合低算力随访建议路径。</div>
 </div>
 <div class="tl-item ">
 <span class="tl-agent">Generalist</span><span class="tl-verdict"></span>
 <div class="tl-content expandable">问题清单：常见上呼吸道感染或轻症不适可能。
 初步建议：休息、补液、观察体温和症状变化；避免自行使用抗生素。
 如高热不退、胸痛、呼吸困难、意识异常或症状加重，应线下就医。</div>
-</div>
-<div class="tl-item pass">
-<span class="tl-agent">Pharmacist</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
-<div class="tl-content expandable">[PASS]
-未发现明确药物相互作用或剂量越权问题。</div>
-</div>
-<div class="tl-item pass">
-<span class="tl-agent">SafetyEthics</span><span class="tl-verdict"><span class="badge badge-pass">PASS</span></span>
-<div class="tl-content expandable">[PASS]
-方案保持保守并设置了就医条件。</div>
 </div></div><div class="disclaimer">本报告由 Micro-MDT 系统自动生成，仅用于计算机科学与医疗 AI 安全机制实验，不能作为真实诊断、处方或治疗依据。</div><div class="footer">Micro-MDT &mdash; Compute-Optimal 慢病复诊智能副驾</div></div>
 <script>
 (function(){
