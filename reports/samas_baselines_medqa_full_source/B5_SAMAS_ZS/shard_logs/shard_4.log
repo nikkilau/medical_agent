@@ -1,0 +1,40 @@
+[data] loading MedQA split=test n=500 seed=42
+Using the latest cached version of the dataset since GBaker/MedQA-USMLE-4-options couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at data/medqa/GBaker___med_qa-usmle-4-options/default/0.0.0/0fb93dd23a7339b6dcd27e241cb9b5eca62d4d18 (last modified on Sat Jun  6 10:45:44 2026).
+[data] got 500 cases; shard 4/16 has 31 cases
+[provider] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=qwen2.5:14b
+[LLM Provider] model=qwen2.5:14b, endpoint=http://202.120.24.199:13000/v1/chat/completions
+[embedding] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=nomic-embed-text
+[Embedding Provider] model=nomic-embed-text, endpoint=http://202.120.24.199:13000/v1/embeddings
+[B5_SAMAS_ZS] completed=1 remaining=30 shard=4/16 out=reports/samas_baselines_medqa_full_source/B5_SAMAS_ZS/shards/shard_04_of_16.json
+[B5_SAMAS_ZS] 2/31 (+1/30) OK pred=A gt=A t=28.5s
+[B5_SAMAS_ZS] 3/31 (+2/30) OK pred=B gt=B t=60.9s
+[B5_SAMAS_ZS] 4/31 (+3/30) OK pred=D gt=D t=58.4s
+[B5_SAMAS_ZS] 5/31 (+4/30) OK pred=D gt=D t=29.0s
+[B5_SAMAS_ZS] 6/31 (+5/30) MISS pred=B gt=A t=43.9s
+[B5_SAMAS_ZS] 7/31 (+6/30) ABSTAIN pred=A gt=D t=6.8s
+[B5_SAMAS_ZS] 8/31 (+7/30) OK pred=A gt=A t=59.0s
+[B5_SAMAS_ZS] 9/31 (+8/30) MISS pred=D gt=A t=77.3s
+[B5_SAMAS_ZS] 10/31 (+9/30) OK pred=B gt=B t=33.1s
+[B5_SAMAS_ZS] 11/31 (+10/30) OK pred=C gt=C t=37.8s
+[B5_SAMAS_ZS] 12/31 (+11/30) MISS pred=B gt=A t=36.0s
+[B5_SAMAS_ZS] 13/31 (+12/30) OK pred=A gt=A t=112.9s
+[B5_SAMAS_ZS] 14/31 (+13/30) OK pred=B gt=B t=155.5s
+[B5_SAMAS_ZS] 15/31 (+14/30) OK pred=B gt=B t=54.6s
+[B5_SAMAS_ZS] 16/31 (+15/30) OK pred=A gt=A t=118.6s
+[B5_SAMAS_ZS] 17/31 (+16/30) OK pred=C gt=C t=100.7s
+[B5_SAMAS_ZS] 18/31 (+17/30) ABSTAIN pred=A gt=B t=6.5s
+[B5_SAMAS_ZS] 19/31 (+18/30) MISS pred=D gt=A t=78.8s
+[B5_SAMAS_ZS] 20/31 (+19/30) MISS pred=A gt=D t=175.1s
+[B5_SAMAS_ZS] 21/31 (+20/30) ABSTAIN pred=A gt=B t=96.2s
+[B5_SAMAS_ZS] 22/31 (+21/30) OK pred=A gt=A t=64.9s
+[B5_SAMAS_ZS] 23/31 (+22/30) OK pred=D gt=D t=51.7s
+[B5_SAMAS_ZS] 24/31 (+23/30) MISS pred=C gt=D t=200.8s
+[B5_SAMAS_ZS] 25/31 (+24/30) MISS pred=C gt=D t=41.4s
+[B5_SAMAS_ZS] 26/31 (+25/30) MISS pred=B gt=C t=92.3s
+[B5_SAMAS_ZS] 27/31 (+26/30) ABSTAIN pred=A gt=A t=85.5s
+[B5_SAMAS_ZS] 28/31 (+27/30) OK pred=B gt=B t=67.5s
+[B5_SAMAS_ZS] 29/31 (+28/30) OK pred=A gt=A t=66.0s
+[B5_SAMAS_ZS] 30/31 (+29/30) MISS pred=D gt=A t=92.9s
+[B5_SAMAS_ZS] 31/31 (+30/30) MISS pred=D gt=A t=62.0s
+[B5_SAMAS_ZS] done n=31 acc=0.516 abstain=0.129 wall=2199.5s

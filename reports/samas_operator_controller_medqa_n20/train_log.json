@@ -1,0 +1,145 @@
+[
+  {
+    "case_id": "medqa_train_4001",
+    "operators": [
+      "DIRECT",
+      "SAFETY",
+      "MODERATOR",
+      "STOP"
+    ],
+    "predicted": "A",
+    "ground_truth": "C",
+    "correct": false,
+    "abstained": false,
+    "rounds": 4,
+    "reward": -0.004,
+    "update": {
+      "loss": -0.014817671850323677,
+      "reward": -0.004,
+      "baseline": -0.004,
+      "advantage": -0.004
+    },
+    "profile": {
+      "complexity": "MEDIUM",
+      "risk": "MODERATE",
+      "task_type": "DX"
+    },
+    "epoch": 1
+  },
+  {
+    "case_id": "medqa_train_7526",
+    "operators": [
+      "GENERALIST",
+      "SPECIALIST",
+      "GENERALIST",
+      "MODERATOR",
+      "MODERATOR",
+      "STOP"
+    ],
+    "predicted": "D",
+    "ground_truth": "D",
+    "correct": true,
+    "abstained": false,
+    "rounds": 5,
+    "reward": 0.995,
+    "update": {
+      "loss": 6.567012786865234,
+      "reward": 0.995,
+      "baseline": 0.0959,
+      "advantage": 0.999
+    },
+    "profile": {
+      "complexity": "MEDIUM",
+      "risk": "SAFE",
+      "task_type": "DX"
+    },
+    "epoch": 1
+  },
+  {
+    "case_id": "medqa_train_8395",
+    "operators": [
+      "LOOKUP",
+      "GENERALIST",
+      "VOTER",
+      "SAFETY",
+      "REVISER",
+      "STOP"
+    ],
+    "predicted": "A",
+    "ground_truth": "A",
+    "correct": true,
+    "abstained": false,
+    "rounds": 7,
+    "reward": 0.993,
+    "update": {
+      "loss": 5.017810344696045,
+      "reward": 0.993,
+      "baseline": 0.18561,
+      "advantage": 0.8971
+    },
+    "profile": {
+      "complexity": "MEDIUM",
+      "risk": "SAFE",
+      "task_type": "RX"
+    },
+    "epoch": 1
+  },
+  {
+    "case_id": "medqa_train_7506",
+    "operators": [
+      "LOOKUP",
+      "GENERALIST",
+      "GENERALIST",
+      "MODERATOR",
+      "MODERATOR",
+      "STOP"
+    ],
+    "predicted": "B",
+    "ground_truth": "B",
+    "correct": true,
+    "abstained": false,
+    "rounds": 4,
+    "reward": 0.996,
+    "update": {
+      "loss": 4.438182353973389,
+      "reward": 0.996,
+      "baseline": 0.266649,
+      "advantage": 0.8103899999999999
+    },
+    "profile": {
+      "complexity": "MEDIUM",
+      "risk": "SAFE",
+      "task_type": "RX"
+    },
+    "epoch": 1
+  },
+  {
+    "case_id": "medqa_train_7926",
+    "operators": [
+      "LOOKUP",
+      "SPECIALIST",
+      "VOTER",
+      "SAFETY",
+      "MODERATOR",
+      "STOP"
+    ],
+    "predicted": "C",
+    "ground_truth": "D",
+    "correct": false,
+    "abstained": false,
+    "rounds": 7,
+    "reward": -0.007,
+    "update": {
+      "loss": -1.4418689012527466,
+      "reward": -0.007,
+      "baseline": 0.23928410000000003,
+      "advantage": -0.27364900000000003
+    },
+    "profile": {
+      "complexity": "MEDIUM",
+      "risk": "SAFE",
+      "task_type": "RX"
+    },
+    "epoch": 1
+  }
+]

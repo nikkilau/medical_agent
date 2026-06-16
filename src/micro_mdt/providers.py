@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import math
 import os
 import re
 import urllib.request
@@ -13,6 +15,28 @@ class LLMProvider(ABC):
     @abstractmethod
     def complete(self, messages: list[LLMMessage], *, temperature: float = 0.2) -> str:
         raise NotImplementedError
+
+
+class EmbeddingProvider(ABC):
+    @abstractmethod
+    def embed(self, text: str) -> list[float]:
+        raise NotImplementedError
+
+
+class MockEmbeddingProvider(EmbeddingProvider):
+    """Deterministic local embedding provider for tests."""
+
+    def __init__(self, dim: int = 32) -> None:
+        self.dim = dim
+
+    def embed(self, text: str) -> list[float]:
+        digest = hashlib.sha256(text.encode("utf-8")).digest()
+        values: list[float] = []
+        for i in range(self.dim):
+            byte = digest[i % len(digest)]
+            values.append((byte / 127.5) - 1.0)
+        norm = math.sqrt(sum(v * v for v in values)) or 1.0
+        return [v / norm for v in values]
 
 
 class MockProvider(LLMProvider):
@@ -275,3 +299,63 @@ class OpenAICompatibleProvider(LLMProvider):
                 f"Check network and MICRO_MDT_BASE_URL."
             ) from e
         return body["choices"][0]["message"]["content"]
+
+
+class OpenAICompatibleEmbeddingProvider(EmbeddingProvider):
+    """Minimal stdlib client for OpenAI-compatible embeddings endpoints."""
+
+    def __init__(
+        self,
+        *,
+        api_key: str | None = None,
+        base_url: str | None = None,
+        model: str = "nomic-embed-text",
+        timeout: int = 60,
+    ) -> None:
+        self.api_key = api_key or os.getenv("MICRO_MDT_API_KEY") or os.getenv("OPENAI_API_KEY")
+        self.base_url = (base_url or os.getenv("MICRO_MDT_BASE_URL") or "https://api.openai.com/v1").rstrip("/")
+        self.model = model
+        self.timeout = timeout
+        self._cache: dict[str, list[float]] = {}
+        if not self.api_key:
+            raise ValueError("Missing API key. Set MICRO_MDT_API_KEY or OPENAI_API_KEY.")
+        self._endpoint = f"{self.base_url}/embeddings"
+        print(f"[Embedding Provider] model={self.model}, endpoint={self._endpoint}", flush=True)
+
+    def embed(self, text: str) -> list[float]:
+        key = text[:8192]
+        if key in self._cache:
+            return self._cache[key]
+        payload = {
+            "model": self.model,
+            "input": key,
+        }
+        data = json.dumps(payload).encode("utf-8")
+        request = urllib.request.Request(
+            self._endpoint,
+            data=data,
+            headers={
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                body = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", errors="replace")
+            raise RuntimeError(
+                f"Embedding API error {e.code}: {e.reason}. "
+                f"Response: {detail[:500]}. "
+                f"Check embedding model name '{self.model}' is valid at {self.base_url}"
+            ) from e
+        except urllib.error.URLError as e:
+            raise RuntimeError(
+                f"Cannot reach {self._endpoint}: {e.reason}. "
+                f"Check network and MICRO_MDT_BASE_URL."
+            ) from e
+        embedding = body["data"][0]["embedding"]
+        result = [float(x) for x in embedding]
+        self._cache[key] = result
+        return result

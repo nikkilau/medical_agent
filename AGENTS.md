@@ -1,119 +1,89 @@
 # AGENTS.md
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This file describes the LLM-driven Agents and Operators available in this
+repository. It is consumed by Codex / Claude Code / any other AI coding
+assistant working with this codebase to know which roles already exist and
+where to extend them.
 
-## Project overview
+## Original Micro-MDT agents (`src/agents.py`)
 
-Micro-MDT is a zero-dependency Python MVP that implements Test-Time Compute theory (arXiv:2408.03314) as a multi-agent medical safety workflow. It simulates a Multi-Disciplinary Team (MDT) with Proposer/Verifier debate, sequential revision, and safety abstention — but uses **no real patients, no training, and no real medical advice**. The default `MockProvider` is deterministic and requires no API key.
+| Agent | System-prompt symbol | Role |
+|---|---|---|
+| `TriageAgent` | `TRIAGE_PROMPT` | Classify case complexity into LOW / MEDIUM / HIGH and emit `[LOW]` / `[MEDIUM]` / `[HIGH]` tag |
+| `GeneralistAgent` | `GENERALIST_PROMPT` | Propose an initial conservative plan |
+| `ReviserAgent` | `REVISION_PROMPT` | Revise a plan after reviewer feedback |
+| `PharmacistAgent` | `PHARMACY_PROMPT` | Audit drug interactions, dosing, contraindications. Emit `[PASS]` / `[REVISE]` / `[ABSTAIN]` |
+| `SafetyEthicsAgent` | `SAFETY_PROMPT` | Audit emergency delays, prescription overreach, ethics. Emit `[PASS]` / `[REVISE]` / `[ABSTAIN]` |
+| `DecisionSynthesisAgent` | `DECISION_SYNTHESIS_PROMPT` | Synthesise multiple AI views into 2–3 human-decision options |
+| `DocumentationAgent` | `DOCUMENTATION_PROMPT` | After the human decides, produce EHR / patient note / reminder drafts |
 
-## Commands
+All agents share the `Agent` base class wrapping an `LLMProvider`.
 
-```powershell
-# Run all example cases (mock provider, no API key needed)
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli
+## Medical TTC operators (`src/medical_ttc/operators.py`)
 
-# Run a specific case from examples/cases.json
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --case-id case_high_001 --show-trace
+These are thin reusable wrappers around the original agents that the AFLOW
+MCTS search treats as composable building blocks.
 
-# Run an ad-hoc case from text
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --case "患者 70 岁，胸痛伴呼吸困难 30 分钟。"
+| Operator | Wraps | Purpose |
+|---|---|---|
+| `TriageOperator` | TriageAgent | Returns `(Difficulty, raw_text)` |
+| `GenerateOperator` | GeneralistAgent | Single-shot proposal |
+| `ReviewOperator` | Pharmacist + SafetyEthics | Returns combined verdicts + PASS / REVISE / ABSTAIN summary |
+| `ReviseOperator` | ReviserAgent | Rewrites a plan given feedback |
+| `EnsembleOperator` | GenerateOperator + voting | N-sample self-consistency, majority on extracted answer |
+| `ModeratorOperator` | DecisionSynthesisAgent | Synthesise multiple specialist opinions (MDAgents style) |
+| `CustomOperator` | new Agent with mutable system-prompt | Free-form node — AFLOW MCTS mutates this |
 
-# Interactive human-in-the-loop mode
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --case-id case_high_003 --interactive-human
+## Routers (`src/medical_ttc/router.py`)
 
-# Generate HTML reports
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --output-html reports
+| Router | Strategy | When to use |
+|---|---|---|
+| `ZeroShotRouter` | LLM call with `TRIAGE_PROMPT` | Default — safety-aware, ~1 s/case |
+| `HeuristicRouter` | Hand-written keyword features + thresholds | Free at inference — but fails on adversarial safety prompts (see W₄ in the report) |
+| `ClassifierRouter` | Linear scorer over 5-dim feature vector, trained via `train_classifier_router(...)` | MaAS-style learned routing |
 
-# Start web UI
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --web
+## Workflows (`src/medical_ttc/baselines.py`, `ttc_workflow.py`, `dspy_baseline.py`)
 
-# Use real LLM (OpenAI-compatible API)
-$env:PYTHONPATH="src"
-$env:MICRO_MDT_API_KEY="sk-..."
-python -m micro_mdt.cli --provider openai-compatible --case-id case_high_001
-
-# Run tests
-$env:PYTHONPATH="src"
-python -m unittest discover -s tests
-```
-
-The `$env:PYTHONPATH="src"` prefix is only needed when running outside an installed package. If installed via `pip install -e .`, run commands directly (e.g., `micro-mdt`).
-
-## Architecture
-
-### Data flow
-
-```
-PatientCase ──► MicroMDT.run_case() ──► MDTResult
-                    │                       │
-             ┌──────┼──────┐           (final_answer,
-             ▼      ▼      ▼            rounds, trace,
-           LOW   MEDIUM  HIGH           human_required,
-             │      │      │            documents)
-             ▼      ▼      ▼
-        Generalist  +Pharm  +Pharm
-        (direct)    +Safety +Safety
-                    +1 rev  +≤max_rounds
-                             debate
-```
-
-### Difficulty routing (compute-optimal)
-
-- **LOW**: Triage → Generalist → output (1 LLM call beyond triage). No review.
-- **MEDIUM**: Triage → Generalist → Pharmacist + Safety. If both pass → done (3 calls). If either fails → 1 revision + re-review (5 calls). If still failing → abstain.
-- **HIGH**: Triage → Generalist → debate loop (Pharmacist + Safety → Revision) up to `max_rounds` (default 3). Consensus → output; persistent disagreement → abstain with structured A/B/C options.
-
-### Key files
-
-| File | Role |
+| Workflow | Description |
 |---|---|
-| `src/micro_mdt/workflow.py` | Core orchestration: `MicroMDT.run_case()`, `_run_medium()`, `_run_high()`, abstention, human callback, document generation |
-| `src/micro_mdt/agents.py` | `Agent` (prompt + provider → `run()`), `AgentSuite` (7 agents), `parse_difficulty()` / `parse_verdict()` |
-| `src/micro_mdt/models.py` | Dataclasses: `PatientCase`, `AgentResponse`, `DebateRound`, `MDTResult`; enums: `Difficulty`, `Verdict` |
-| `src/micro_mdt/prompts.py` | System prompts for all 7 agents + `DISCLAIMER` constant |
-| `src/micro_mdt/providers.py` | `LLMProvider` (ABC), `MockProvider` (keyword-matching, deterministic), `OpenAICompatibleProvider` (stdlib `urllib`) |
-| `src/micro_mdt/cli.py` | argparse CLI entry point, `ask_human_decision()` interactive callback |
-| `src/micro_mdt/io.py` | Load cases from `examples/cases.json` or from ad-hoc text |
-| `src/micro_mdt/reporting.py` | Terminal markdown-style output |
-| `src/micro_mdt/visualization.py` | HTML report generation with flow diagrams, debate timelines, collapsible traces |
-| `src/micro_mdt/webapp.py` | Interactive web UI on `http://localhost:8080` using stdlib `http.server`; sessions stored in `_SESSIONS` dict |
+| `BaselineIOWorkflow` (W₀) | 1 generate call, no TTC |
+| `CoTSCWorkflow` (W₁) | N-sample self-consistency vote, no router |
+| `HandCodedMicroMDTWorkflow` (W₂) | Wraps original `MicroMDT.run_case` |
+| `MDAgentsSourceWorkflow` (W₃) | Wrapper around downloaded `MDAgents/` source code |
+| `MedicalTTCWorkflow` (W₄ family) | Our 4-layer framework |
+| `DSPyPromptOnlyWorkflow` (W₇) | W₂ structure + best-of-N generalist prompt |
 
-### The 7 agents (AgentSuite)
+## When to add a new agent
 
-1. **Triage** — classifies case as `[LOW]`, `[MEDIUM]`, or `[HIGH]`
-2. **Generalist** (Proposer) — generates initial treatment plan
-3. **GeneralistRevision** — revises plan based on review feedback
-4. **Pharmacist** (Verifier) — checks drug interactions, outputs `[PASS]`/`[REVISE]`/`[ABSTAIN]`
-5. **SafetyEthics** (Verifier) — checks for emergency delay, harm risk, outputs `[PASS]`/`[REVISE]`/`[ABSTAIN]`
-6. **DecisionSynthesis** — generates A/B/C structured options for human doctor when AI deadlocks
-7. **Documentation** — generates EHR draft, patient note, and follow-up reminder from human decision
+1. Add an Agent subclass + system prompt in `agents.py` + `prompts.py`.
+2. If it's a reusable building block, also add a thin Operator wrapper in
+   `medical_ttc/operators.py`.
+3. Optionally wire it into `MedicalTTCWorkflow` (Layer 2) — but **do not**
+   bypass the Layer-3 Pharmacy + SafetyEthics audit unless it is an
+   explicit ablation experiment (W₆).
+4. Make sure unit tests in `tests/test_medical_ttc_smoke.py` still pass
+   with `MockProvider`.
 
-### Verdict parsing
+## When to add a new dataset
 
-`parse_verdict()` in `agents.py` matches `[PASS]`, `[ABSTAIN]` in agent output; default is `REVISE`. `parse_difficulty()` matches `[HIGH]`, `[MEDIUM]`; default is `LOW`. Both are case-insensitive and look for the bracket-delimited markers.
+1. Implement `load_<name>(n) -> List[LabeledCase]` in
+   `medical_ttc/data.py`. Use a HuggingFace mirror or `ghproxy.net` if the
+   server cannot reach the internet directly.
+2. Add a scoring function in `medical_ttc/evaluator.py`.
+3. Decide how the new metric folds into `G(W,T)` (e.g. additional penalty
+   term) and update the report template.
+4. **Do not** introduce self-constructed cases unless they are clearly
+   labelled as smoke / unit-test fallback (e.g. the `_*_sample()` helpers).
 
-### MockProvider design
+## When to add a new optimizer
 
-`MockProvider.complete()` dispatches to keyword-based methods by inspecting the system prompt for Chinese role names (e.g., "分诊 Agent" → `_triage()`). It checks for high-risk terms with negation awareness via `_has_any_unnegated()`. This is the default provider — no network or API key needed.
+The AFLOW MCTS in `medical_ttc/mcts.py` is the default. To add e.g. a
+ScoreFlow Score-DPO optimizer or a MaAS supernet trainer, follow the
+existing `run_mcts_search.py` skeleton: build a workflow factory, give it
+a validation slice, log per-iteration metrics into `reports/<run_name>/`
+and merge with the pilot baseline JSON via `MEDTTC_BASELINE_RESULTS`.
 
-### Human-in-the-loop pattern
+## Disclaimer
 
-`MicroMDT.run_case()` accepts an optional `human_decision_callback: Callable[[MDTResult], str | None]`. When a case triggers abstention:
-1. `DecisionSynthesis` agent generates A/B/C options → stored in `result.human_options`
-2. If callback provided, it's called with the result; return value becomes `result.human_decision`
-3. With a decision, `Documentation` agent generates three documents (EHR draft, patient note, reminder)
-4. CLI provides `ask_human_decision()` as the callback; web app stores result in session and waits for a second POST
-
-### Provider selection
-
-CLI `--provider` flag: `mock` (default, zero-cost) or `openai-compatible`. The `OpenAICompatibleProvider` reads from env vars: `MICRO_MDT_API_KEY` (or `OPENAI_API_KEY`), `MICRO_MDT_BASE_URL`, `MICRO_MDT_MODEL`. It uses only stdlib `urllib` — no `requests`, no `openai` package.
-
-### Testing
-
-Tests use `unittest` with `MockProvider` (no network). All workflow paths are tested: LOW direct, MEDIUM revision, HIGH abstention, human decision → documentation, HTML rendering. Test file: `tests/test_workflow.py` — two classes, `MicroMDTWorkflowTests` and `VisualizationTests`.
+Same as the rest of the project: this is a research demo. Never use any
+agent or operator here as a real medical advice channel.

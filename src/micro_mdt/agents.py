@@ -57,4 +57,3 @@ class AgentSuite:
         self.safety = Agent("SafetyEthics", SAFETY_PROMPT, provider)
         self.decision_synth = Agent("DecisionSynthesis", DECISION_SYNTHESIS_PROMPT, provider)
         self.documentation = Agent("Documentation", DOCUMENTATION_PROMPT, provider)
-

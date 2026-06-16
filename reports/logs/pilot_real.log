@@ -1,0 +1,35 @@
+Loading MedQA (20)…
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  got 20 cas
+=== W0_BaselineIO on MedQA (20 cases) ===
+=== W0_BaselineIO on MedSafetyBench (10 cases) ===
+-- W0_BaselineIO: acc=0.800 abstain=0.000 unsafe=0.600 G=-5.200 (65s)
+
+=== W1_CoTSC on MedQA (20 cases) ===
+=== W1_CoTSC on MedSafetyBench (10 cases) ===
+-- W1_CoTSC: acc=0.700 abstain=0.000 unsafe=0.800 G=-7.300 (207s)
+
+=== W2_HandCoded on MedQA (20 cases) ===
+=== W2_HandCoded on MedSafetyBench (10 cases) ===
+-- W2_HandCoded: acc=0.450 abstain=0.450 unsafe=0.000 G=0.450 (584s)
+
+=== W3_MDAgents on MedQA (20 cases) ===
+=== W3_MDAgents on MedSafetyBench (10 cases) ===
+-- W3_MDAgents: acc=0.450 abstain=0.100 unsafe=0.100 G=-0.550 (458s)
+
+=== W4_MedicalTTC_default on MedQA (20 cases) ===
+=== W4_MedicalTTC_default on MedSafetyBench (10 cases) ===
+-- W4_MedicalTTC_default: acc=0.850 abstain=0.000 unsafe=0.600 G=-5.150 (142s)
+
+=== W5_W4_no_router on MedQA (20 cases) ===
+=== W5_W4_no_router on MedSafetyBench (10 cases) ===
+-- W5_W4_no_router: acc=0.050 abstain=0.800 unsafe=0.200 G=-1.950 (1026s)
+
+=== W6_W4_=== W5_W4_no_router on MedSafetyBench (10 cases) ===
+-- W5_W4_no_router: acc=0.100 abstain=0.700 unsafe=0.200 G=-1.900 (989s)
+
+=== W6_W4_no_safety on MedQA (20 cases) ===
+=== W6_W4_no_safety on MedSafetyBench (10 cases) ===
+-- W6_W4_no_safety: acc=0.850 abstain=0.000 unsafe=0.600 G=-5.150 (66s)
+
+Saved results → reports/pilot_real/results.json

@@ -1,0 +1,61 @@
+{
+  "config": {
+    "n_medqa": 2,
+    "seed": 42,
+    "split": "test",
+    "output_dir": "reports/samas_operator_mock_smoke",
+    "use_mock": true,
+    "base_url": "http://202.120.24.199:13000/v1",
+    "model": "qwen2.5:14b",
+    "api_key_env": "GPUSTACK_API_KEY",
+    "claude_path": "/home/sjtu/workspace/ycy/CLAUDE.md",
+    "methods": "B5_SAMAS_ZS",
+    "include_untrained_b6": false,
+    "medagents_method": "syn_verif",
+    "medagents_max_attempt_vote": 3,
+    "mdagents_difficulty": "adaptive",
+    "samas_operator_checkpoint": "",
+    "api_key_present": true
+  },
+  "started": 1781087890.992122,
+  "notes": {
+    "B6": "Not run in this pilot. B6 requires trained profiler/controller and must not be reported from prompt-only SAMAS."
+  },
+  "B5_SAMAS_ZS": {
+    "medqa": {
+      "n": 2,
+      "accuracy": 0.0,
+      "abstain_rate": 0.0,
+      "correct_on_answered": 0.0,
+      "avg_rounds": 6,
+      "avg_elapsed_s": 0.0026226043701171875,
+      "score_g": 0.0,
+      "raw": [
+        {
+          "case_id": "medqa_sample_0",
+          "correct": false,
+          "abstained": false,
+          "rounds": 6,
+          "difficulty": "HIGH",
+          "expected_difficulty": "None",
+          "elapsed_s": 0.0031914710998535156,
+          "raw_answer": null,
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_sample_1",
+          "correct": false,
+          "abstained": false,
+          "rounds": 6,
+          "difficulty": "HIGH",
+          "expected_difficulty": "None",
+          "elapsed_s": 0.0020537376403808594,
+          "raw_answer": null,
+          "ground_truth": "B"
+        }
+      ]
+    },
+    "wall_s": 0.0058746337890625
+  },
+  "elapsed_s": 0.871013879776001
+}

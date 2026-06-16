@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from .config import load_env_file
-from .io import load_case_from_text, load_cases
+from .case_io import load_case_from_text, load_cases
 from .providers import MockProvider, OpenAICompatibleProvider
 from .reporting import render_result, render_summary
 from .visualization import render_html, render_summary_html
@@ -44,7 +44,9 @@ def main(argv: list[str] | None = None) -> int:
     load_env_file()
 
     if args.web:
-        from .webapp import run_server
+        # Keep the legacy top-level module path patchable for tests and users
+        # that monkeypatch `webapp.run_server`.
+        from webapp import run_server
         run_server(
             port=args.port,
             provider=args.provider,
@@ -110,4 +112,3 @@ def ask_human_decision(result):
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

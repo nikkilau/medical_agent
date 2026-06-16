@@ -1,0 +1,59 @@
+{
+  "config": {
+    "train_n": 2,
+    "eval_n": 2,
+    "train_split": "train",
+    "eval_split": "test",
+    "seed": 42,
+    "epochs": 1,
+    "max_steps": 6,
+    "output_dir": "reports/samas_operator_train_mock_smoke",
+    "checkpoint": "reports/samas_operator_train_mock_smoke/controller.pt",
+    "use_mock": true,
+    "base_url": "http://202.120.24.199:13000/v1",
+    "model": "qwen2.5:14b",
+    "api_key_env": "GPUSTACK_API_KEY",
+    "claude_path": "/home/sjtu/workspace/ycy/CLAUDE.md",
+    "api_key_present": true
+  },
+  "checkpoint": "reports/samas_operator_train_mock_smoke/controller.pt",
+  "train_summary": {
+    "n": 2,
+    "avg_reward": -0.004,
+    "accuracy": 0.0
+  },
+  "eval_medqa": {
+    "n": 2,
+    "accuracy": 0.0,
+    "abstain_rate": 0.0,
+    "correct_on_answered": 0.0,
+    "avg_rounds": 6,
+    "avg_elapsed_s": 0.002074122428894043,
+    "score_g": 0.0,
+    "raw": [
+      {
+        "case_id": "medqa_sample_0",
+        "correct": false,
+        "abstained": false,
+        "rounds": 6,
+        "difficulty": "HIGH",
+        "expected_difficulty": "None",
+        "elapsed_s": 0.0021581649780273438,
+        "raw_answer": null,
+        "ground_truth": "A"
+      },
+      {
+        "case_id": "medqa_sample_1",
+        "correct": false,
+        "abstained": false,
+        "rounds": 6,
+        "difficulty": "HIGH",
+        "expected_difficulty": "None",
+        "elapsed_s": 0.001990079879760742,
+        "raw_answer": null,
+        "ground_truth": "B"
+      }
+    ]
+  },
+  "elapsed_s": 0.07749819755554199
+}

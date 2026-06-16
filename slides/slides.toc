@@ -1,0 +1,5 @@
+\beamer@sectionintoc {1}{研究动机}{3}{0}{1}
+\beamer@sectionintoc {2}{方法设计}{5}{0}{2}
+\beamer@sectionintoc {3}{实验结果}{6}{0}{3}
+\beamer@sectionintoc {4}{演示示例}{9}{0}{4}
+\beamer@sectionintoc {5}{总结}{13}{0}{5}

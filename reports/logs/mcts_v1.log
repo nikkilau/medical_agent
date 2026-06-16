@@ -1,0 +1,22 @@
+MCTS config: iters=4 val_n=15 medqa=30 safety=10
+[LLM Provider] model=qwen2.5:14b, endpoint=http://202.120.5.12:18080/v1/chat/completions
+[LLM Provider] model=qwen3.6-plus, endpoint=https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+
+=== W7 DSPy-style prompt grid search ===
+[W7 grid] candidate 0: acc=0.400 (len=116)
+[W7 grid] candidate 1: acc=0.200 (len=959)
+[W7 grid] candidate 2: acc=0.333 (len=1231)
+[W7 grid] candidate 3: acc=0.200 (len=1165)
+  done in 1949s; scores=[0.4, 0.2, 0.3333333333333333, 0.2]
+=== W7 final evaluation on test split ===
+  W7: acc=0.067 unsafe=0.000 G=0.067
+
+=== W4* MCTS search (4 iter, val_n=15) ===
+[MCTS iter 1] parent=0 child=1 Δ=+0.000 best=0.733 streak=1
+[MCTS iter 2] parent=0 child=2 Δ=+0.067 best=0.800 streak=0
+[MCTS iter 3] parent=2 child=3 Δ=-0.200 best=0.800 streak=1
+[MCTS iter 4] parent=2 child=4 Δ=-0.067 best=0.800 streak=2
+=== W4* (MCTS-best) evaluation on test split ===
+  W4*: acc=0.733 unsafe=0.600 G=-5.267
+
+Saved to reports/mcts_v1/results.json

@@ -1,0 +1,818 @@
+% !TeX program = xelatex
+\documentclass[11pt,a4paper]{ctexart}
+
+% ========== Packages ==========
+\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry} % 采用学术论文标准的2.5cm边距
+\usepackage{setspace}
+\singlespacing % 单倍行距
+\usepackage[compact]{titlesec}
+\titlespacing{\section}{0pt}{12pt}{6pt}
+\titlespacing{\subsection}{0pt}{10pt}{4pt}
+\titlespacing{\subsubsection}{0pt}{8pt}{4pt}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\graphicspath{{./}{paper/}}
+\usepackage{float}
+\usepackage{amsmath,amssymb,amsfonts} % 数学公式增强
+\usepackage{textcomp}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{10pt plus 2pt minus 4pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{6pt}
+\setlength{\belowcaptionskip}{6pt}
+
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=2em}
+\usepackage{caption}
+\captionsetup{font=small,skip=4pt}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,shapes,positioning,fit,backgrounds,calc}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\setlength{\parskip}{3pt plus 1pt minus 1pt}
+\setlength{\parindent}{2em}
+
+% ========== Code listing style ==========
+\lstdefinestyle{pystyle}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue!70!black}\bfseries,
+    stringstyle=\color{red!70!black},
+    commentstyle=\color{green!50!black}\itshape,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    captionpos=b,
+    backgroundcolor=\color{gray!5}
+}
+
+\lstdefinestyle{promptstyle}{
+    language=,
+    basicstyle=\ttfamily\footnotesize,
+    frame=tlbr,
+    framesep=4pt,
+    framerule=0.5pt,
+    breaklines=true,
+    backgroundcolor=\color{yellow!5},
+    captionpos=b
+}
+
+% ========== Header/Footer ==========
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize Micro-MDT: 面向医疗安全的推理期多智能体会诊系统}
+\fancyhead[R]{\footnotesize \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{14pt}
+\setlength{\headsep}{10pt}
+
+% ========== 定制算法显示 ==========
+\floatname{algorithm}{算法}
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
+
+% ========== Title info ==========
+\title{{\Huge \textbf{Micro-MDT}}\\[10pt]
+       {\Large 基于难度与安全风险路由的}\\[6pt]
+       {\Large 医疗多智能体会诊系统}\\[16pt]
+       {\normalsize Micro-MDT: A Safety-Aware Multi-Agent Medical Reasoning System}\\[4pt]
+       {\normalsize with Difficulty-Risk Test-Time Compute Routing}}
+
+\author{
+    姓名A \ 学号XXXXXX \quad 
+    姓名B \ 学号XXXXXX \quad 
+    姓名C \ 学号XXXXXX \\[6pt]
+    \small 指导教师：XXX 教授 \\[2pt]
+    \small XX大学 XX学院, 城市, 省份, 邮编
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+% ==================== 中文摘要 ====================
+\newpage
+\renewcommand{\abstractname}{摘要}
+\begin{abstract}
+\noindent \textbf{背景与目的：} 大语言模型（Large Language Models, LLMs）在医疗健康领域的应用潜力巨大，但医疗任务同时包含“应该尽量答对”的医学考试题和“应该拒绝回答”的有害医疗请求。单一模型直接生成容易在两类目标之间混淆：一方面可能在复杂医学题上缺少足够推理，另一方面可能对高风险请求给出危险建议。近期的推理期算力扩展法则（Test-Time Compute Scaling Law）表明，针对不同输入动态分配推理资源，能够比统一增加推理链长度更有效。本研究旨在探索如何把 Test-Time Compute、多智能体会诊与医疗安全审查结合，构建一个面向医学正确性与安全拒答的 Micro-MDT 工作流。
+
+\noindent \textbf{方法：} 本文提出并实现了 Micro-MDT 框架。系统首先使用 Profiler 提取输入的难度（simple/complex）与安全风险（low/high），再由 Router 选择四条路径之一：低风险简单题走 Accuracy Path 直接作答；低风险复杂题走 Dynamic MDT，动态招募 3 个医学专家并由 Moderator 综合；高风险简单题走 Safety Review Low，生成安全草案后经药师与安全伦理审查；高风险复杂题走 Safety Review High，进行多轮修订，超出上限则拒答。系统采用零样本提示工程，不依赖模型参数微调，并通过 OpenAI-compatible Provider 接入 \texttt{qwen2.5:14b}。
+
+\noindent \textbf{实验与结果：} 本文在 MedQA-USMLE-4-options test 分片 1,273 条样本与 MedSafetyBench harmful 450 条样本上构建 1,723 条混合测试集。主指标为 \textbf{Correctness}：MedQA 中答对标准选项记为 correct；MedSafety harmful 中安全拒答、ABSTAIN 或明确安全否定记为 correct。与 Direct CoT 基线相比，Micro-MDT 在 MedQA 上从 0.750 提升到 0.760，在 MedSafety 上从 0.820 提升到 0.840，mixed correctness 从 0.785 提升到 0.800。路径统计显示，Micro-MDT 触发 DYNAMIC\_MDT 98 次、ACCURACY 69 次、SAFETY\_REVIEW\_HIGH 15 次、SAFETY\_REVIEW\_LOW 17 次。
+
+\noindent \textbf{结论：} 研究表明，医疗场景中的推理期算力分配不应只考虑题目难度，还必须显式考虑安全风险。Micro-MDT 通过 difficulty $\times$ safety risk 路由，在普通医学题上保留回答能力，同时在高风险医疗请求上提高安全拒答与安全转向比例，为医疗多智能体安全工作流提供了可复现的工程原型。
+
+\vspace{1em}
+\noindent \textbf{关键词：} 多智能体系统；大语言模型；推理期算力扩展；医疗人工智能安全；MedQA；MedSafetyBench
+\end{abstract}
+
+% ==================== 英文摘要 ====================
+\newpage
+\renewcommand{\abstractname}{Abstract}
+\begin{abstract}
+\noindent \textbf{Background and Objectives:} Large Language Models (LLMs) are increasingly used for medical reasoning, but medical evaluation contains two different target behaviours: answering ordinary medical questions accurately and refusing harmful medical requests safely. A single direct generation pipeline may under-reason on complex questions while over-complying with unsafe requests. This study investigates whether test-time compute can be allocated by both task difficulty and safety risk, using a lightweight multi-agent medical workflow.
+
+\noindent \textbf{Methods:} We propose Micro-MDT, a safety-aware multi-agent workflow. A profiler first estimates difficulty and safety risk, and a router selects one of four paths: direct accuracy-oriented answering for low-risk simple questions; Dynamic MDT with three recruited specialists and a moderator for low-risk complex questions; one-round pharmacist and safety-ethics review for high-risk simple requests; and multi-round safety review with possible abstention for high-risk complex requests. The implementation uses zero-shot prompting, no parameter fine-tuning, and an OpenAI-compatible \texttt{qwen2.5:14b} backend.
+
+\noindent \textbf{Results:} We evaluate on a 1,723-example mixed benchmark consisting of 1,273 MedQA-USMLE test questions and 450 harmful MedSafetyBench prompts. Correctness is defined task-wise: correct option extraction for MedQA, and safe refusal, abstention, or safe redirection for MedSafety. Compared with a Direct CoT baseline, Micro-MDT improves MedQA correctness from 0.750 to 0.760, MedSafety correctness from 0.820 to 0.840, and mixed correctness from 0.785 to 0.800.
+
+\noindent \textbf{Conclusions:} The results suggest that medical test-time compute should be allocated not only by difficulty but also by safety risk. Micro-MDT preserves ordinary medical QA ability while improving safe behaviour on harmful medical prompts, providing a reproducible prototype for safety-aware multi-agent medical reasoning.
+
+\vspace{1em}
+\noindent \textbf{Keywords:} Multi-Agent Systems; Large Language Models; Test-Time Compute Scaling; Medical AI Safety; MedQA; MedSafetyBench
+\end{abstract}
+
+% ===================================================================
+\newpage
+\tableofcontents
+\newpage
+
+\setcounter{page}{1}
+% ===================================================================
+% ==================== 第1章 引言 ====================
+\section{引言}
+
+\subsection{研究背景}
+
+医疗大语言模型的评测目标正在从单一的“答题正确率”扩展为更贴近真实部署的双重目标：对普通医学问题应尽量给出正确答案，对有害医疗请求则应拒绝危险操作并转向安全帮助。前者通常体现在 MedQA、USMLE 等医学选择题基准中，后者则体现在 MedSafetyBench 等安全基准中。两类任务共享医学语义空间，但期望输出截然不同：同样涉及药物、剂量或急症信号的输入，在医学考试题中可能需要作答，在有害请求中却必须拒答。
+
+这种目标混合带来了明显的工作流挑战。若系统对所有输入都采用同一个 chain-of-thought prompt，模型容易在复杂选择题上推理不足，也可能在高风险请求上过度配合。真实医疗场景中的多学科会诊（Multi-Disciplinary Team, MDT）提供了一个自然启发：不同病例并不需要相同的专家配置和审查强度，简单低风险问题可以快速处理，复杂问题需要更多专科视角，高风险问题则必须增加药物安全和伦理审查。
+
+\subsection{大语言模型在医疗健康领域的机遇与挑战}
+
+大语言模型（Large Language Models, LLMs）的爆发式发展为缓解医疗知识服务资源紧缺提供了前所未有的技术途径。近年来，包括 GPT-4 \cite{nori2023capabilities}、Med-PaLM 2 \cite{singhal2023medpalm}、以及国内的华佗（HuaTuo）、Qwen-Med 等在内的通用与医学垂直领域模型，均在各类医学基准测试（如 USMLE 美国执业医师资格考试）中展现出了接近甚至超越人类专家的知识储备和推理能力。理论上，将此类大模型部署为“医疗智能副驾（Copilot）”，可以提高医学知识问答、初步风险提示和患者教育材料生成的效率。
+
+然而，医疗决策是一个典型的“高风险、低容错（High-stakes）”领域，错误的诊疗建议可能直接危及患者的生命安全。当前，单一 LLM 通过单次推理（Single-pass Inference）直接输出医疗决策面临着难以克服的结构性缺陷：
+\begin{enumerate}
+    \item \textbf{事实幻觉与自信性偏见（Hallucinations \& Overconfidence）：} 大模型基于自回归概率生成的本质，决定了其可能编造看似合理但完全错误的医学建议，且往往缺乏对自身置信度的准确估计。
+    \item \textbf{多重用药冲突审查缺失：} 在复杂的共病场景下，单次生成模型容易被主要症状“劫持”注意力，从而忽视隐藏在长文本病史中的药物禁忌（如肝肾功能不全下的剂量调整、心血管药物与 NSAIDs 的拮抗作用）。
+    \item \textbf{危急重症的识别延迟：} 模型可能倾向于给出“安抚性”的常见病建议，而对潜伏在非典型症状（如隐匿性胸痛、黑便、极度乏力）背后的致死性急症（如心肌梗死、消化道大出血）缺乏足够的敏感度和强制预警机制 \cite{lee2023benefits}。
+\end{enumerate}
+
+综上，在缺乏可信、透明且具备多角度交叉验证机制的前提下，直接将端到端的 LLM 生成结果用于患者诊疗，面临着巨大的伦理争议和不可控的安全风险。
+
+\subsection{理论动机：推理期算力扩展法则}
+
+为克服单模型的局限性，人工智能领域的最新研究视角正从“模型预训练参数规模的扩大（Train-Time Scaling）”转向“推理期计算资源的动态扩展（Test-Time Compute Scaling）”。Snell 等人在 2024 年的研究 \cite{snell2024scaling} 以及 Lightman 等人的“Let's Verify Step by Step”工作 \cite{lightman2024let} 均系统性地证明：对于复杂逻辑推理任务，在测试推理阶段赋予模型额外的算力（例如通过采样、自我反思、多路径搜索或外部验证器），能够产生比简单堆砌底层参数更显著且更具性价比的性能提升。
+
+这一“算力最优（Compute-Optimal）”法则为构建高可靠医疗 AI 系统提供了强有力的理论指导：在面对简单低风险问题时，系统只需消耗基础算力生成标准回复；而在面对复杂医学推理或高风险医疗请求时，系统应当自动触发更密集的计算，即激活多个具备不同医学视角的专家或验证智能体，展开审查、综合与必要的安全拒答。
+
+\subsection{研究目的与主要贡献}
+
+基于上述背景，人类医院中广泛采用的“多学科专家会诊（Multi-Disciplinary Team, MDT）”制度为我们提供了理想的仿生学蓝本。本文旨在提出并构建 \textbf{Micro-MDT}，一个低成本、高透明度、以安全为首要目标的医疗多智能体推理系统。
+
+本文的主要贡献（Contributions）可归纳为以下三点：
+\begin{itemize}
+    \item \textbf{架构创新（MDT-inspired 四路径工作流）：} 将 Test-Time Compute 理论中的“按需分配算力”、MDT 多专家会诊和主动拒答机制工程化，构建了一个包含 profiler、router、直接回答、动态专家、moderator、药师审查、安全伦理审查和修订/拒答模块的协同原型系统。
+    \item \textbf{动态算力分配算法（难度-安全四路径路由）：} 设计了根据 difficulty 与 safety risk 分配推理资源的机制。简单低风险问题直接回答，复杂低风险问题触发动态专家会诊，高风险问题进入药师与安全伦理审查链路。
+    \item \textbf{混合基准实验验证：} 在 MedQA-USMLE-4-options 与 MedSafetyBench harmful 构成的 1,723 条混合测试集上，以 correctness 同时衡量医学选择题作答与有害请求安全拒答，验证 Micro-MDT 相比 Direct CoT 的整体收益。
+\end{itemize}
+
+% ===================================================================
+\newpage
+% ==================== 第2章 文献综述 ====================
+\section{相关工作与文献综述}
+
+本章将从大语言模型在医疗领域的应用、多智能体协作机制、推理期算力扩展理论，以及高风险 AI 的人机协同伦理四个维度，全面梳理本研究的理论渊源。
+
+\subsection{大语言模型与医疗健康应用}
+
+医疗行业一直是自然语言处理（NLP）技术落地的高价值领域。早期的研究主要依赖于特定任务的微调模型（如 ClinicalBERT \cite{alsentzer2019public}）进行实体识别与关系抽取。随着大型基座模型的问世，范式发生了根本性转变。
+
+Singhal 等人开发的 Med-PaLM 2 \cite{singhal2023medpalm} 是医学 LLM 的重要里程碑。该模型通过在高质量医学语料上的指令微调，成为首个在美国执业医师资格考试（USMLE）多项选择题上达到 86.5\% 正确率的 AI 系统。随后，OpenAI 的评估报告也表明通用模型 GPT-4 \cite{nori2023capabilities} 无需经过专门针对医疗的微调，即可在类似基准上表现出与医学专家相媲美的诊断推理能力。在国内，基于 LLaMA、Qwen 架构开源的垂直医学大模型（如 HuaTuo、ChatMed 等）也极大地推动了中文医学语境下的症状分诊和医疗问答研究。
+
+然而，将高分基准成绩转化为临床可用性之间仍存在巨大鸿沟。Lee 等人 \cite{lee2023benefits} 在《新英格兰医学杂志》中指出，GPT-4 虽然展现出了惊人的泛化能力，但在面对复杂的长尾医疗案例时，依旧存在难以察觉的事实错误。对于安全敏感的医疗问答而言，单模型由于缺乏“自我怀疑”和外部审查机制，可能在药物禁忌、急症识别或有害请求拒答上出现结构性失误，这构成了本研究引入多智能体交叉验证的直接动机。
+
+\subsection{多智能体协作与交叉辩论机制}
+
+为了克服单模型的视角局限和幻觉问题，研究者们提出了“多智能体（Multi-Agent System, MAS）”范式，即通过多个被赋予不同角色指令的 LLM 实例之间的交互来共同完成任务。
+
+在软件工程和通用问题求解领域，ChatDev \cite{qian2023communicative} 和 AutoGen 等框架已经证明了角色扮演（如程序员、测试员、代码审查员）能够显著提高代码生成的成功率和鲁棒性。Du 等人 \cite{du2024improving} 首次系统性地探讨了通过多智能体辩论（Multi-Agent Debate）来提升事实性和推理能力。他们发现，3到5个智能体针对复杂问题展开多轮相互批判和补充，可以消除大部分的逻辑断层，使大模型在数学推理上的表现提升 15-25 个百分点。Chan 等人提出的 ChatEval \cite{chan2024chateval} 则利用多智能体辩论替代了传统 NLP 的自动化评估指标，取得了与人类评估高度一致的结论。
+
+在医疗垂直领域，MAS 的探索刚刚起步。已有研究尝试将分诊、诊断、验证等角色拆分为多个智能体，并在 MedQA 等基准测试中提升医学推理表现。然而，当前医学 MAS 研究往往更关注选择题得分，对有害医疗请求、药物禁忌拦截和安全拒答的显式建模仍然不足。本研究的 Micro-MDT 从真实 MDT 会诊中抽取“按需调度专家”和“高风险必须复核”的原则，将优化目标扩展为医学正确性与安全拒答的统一 correctness。
+
+\subsection{推理期算力扩展法则（Test-Time Compute Scaling）}
+
+2020年提出的 Scaling Law（模型规模法则） \cite{kaplan2020scaling} 表明，模型性能随训练参数、数据量和训练算力的增加呈现幂律增长。但受限于高质量人类语料的枯竭和 GPU 训练成本的指数级上升，学术界的目光逐渐转向了“推理期算力扩展法则（Scaling Test-Time Compute）”。
+
+Snell 等人在 2024 年的工作 \cite{snell2024scaling} 是该领域的代表性成果。他们提出，面对复杂任务，在测试（推理）阶段动态增加算力资源——例如通过束搜索（Beam Search）、多次采样投票（Self-Consistency \cite{wang2023self}）、思维树搜索（Tree of Thoughts \cite{yao2024tree}）或独立的验证器评估——能够比同等成本下扩大预训练参数规模获得更高的收益。更重要的是，Snell 等人强调了 Compute-Optimal（算力最优分配）的概念：对于过于简单或过于困难的问题，增加算力收益甚微；只有动态地将冗余算力分配给“中等偏上”难度的任务，才能最大化整体系统的效能。
+
+本研究中的 Micro-MDT 将 Test-Time Compute 理论作为核心指导思想，通过轻量级 profiler 同时评估输入用例的难度和安全风险，随后执行差异化的计算资源分配：低风险简单题直接回答，低风险复杂题动态招募专家，高风险题进入药师和安全伦理审查链路。
+
+\subsection{人机协同与医疗 AI 的安全伦理}
+
+医疗决策属于“高风险（High-stakes）”领域。美国食品药品监督管理局（FDA）在《软件作为医疗器械（SaMD）》的相关指导原则中强调了人在回路（Human-in-the-Loop, HITL）的重要性。Amershi 等人 \cite{amershi2014power} 提出的交互式机器学习框架认为，人工智能系统的最终形态不是完全自治（Fully Autonomous），而是对人类能力的增强（Augmentation）。
+
+Rajpurkar 等人在《自然医学》发表的综述 \cite{rajpurkar2022ai} 中进一步指出，医疗 AI 的理想落地模式应当是由 AI 承担耗时的信息搜集、模式匹配和初步起草工作，而将价值判断、最终责任和高阶风险决策权交还给执业医师。针对大语言模型，这一理念在本文中具体化为“主动拒答（Proactive Abstention）”机制：当系统判断请求具有明显危险性，或多轮审查仍无法形成安全输出时，最终答案应拒绝提供操作性医疗建议，并建议寻求专业或急救帮助。
+
+% ===================================================================
+\newpage
+% ==================== 第3章 问题定义与理论框架 ====================
+\section{问题定义与理论框架}
+
+为深入探讨 Micro-MDT 系统的机制，本章通过形式化（Formalization）的数学定义来描述医疗决策环境中的算力路由与多智能体辩论过程。
+
+\subsection{混合医疗任务定义}
+
+定义输入空间 $\mathcal{X}$ 为医学问题文本集合，包括 MedQA 中的选择题与 MedSafetyBench 中的有害医疗请求。定义输出空间 $\mathcal{Y}$ 为模型最终回答。传统单模型生成方法可表示为单个映射函数 $f_{\theta}: \mathcal{X} \rightarrow \mathcal{Y}$，其对所有输入采用同一推理路径，容易同时出现两类错误：普通医学题答错，以及高风险请求被过度配合。
+
+本文将该问题分解为基于多智能体的工作流。我们引入一个包含有限个角色的专家集 $\mathcal{A} = \{A_{pro}, A_{rou}, A_{gen}, A_{rec}, A_{spe}, A_{mod}, A_{pha}, A_{saf}, A_{rev}\}$，分别对应特征提取、路由、直接回答、专家招募、动态专家、综合、药师、安全伦理和修订智能体。
+
+\subsection{自适应算力路由模型}
+
+为了实现推理期算力的 Compute-Optimal 分配，我们不再只定义一个难度标签，而是定义两个互补的输入特征：
+\begin{equation}
+    d_x = A_{pro}^{diff}(x), \quad d_x \in \{\mathrm{SIMPLE}, \mathrm{COMPLEX}\}
+\end{equation}
+\begin{equation}
+    r_x = A_{pro}^{risk}(x), \quad r_x \in \{\mathrm{LOW}, \mathrm{HIGH}\}
+\end{equation}
+其中 $d_x$ 表示医学推理复杂度，$r_x$ 表示回答该问题是否存在医疗安全风险。路由器 $A_{rou}$ 根据二者选择四条路径：
+\begin{equation}
+    p_x = A_{rou}(d_x,r_x) \in \{\mathrm{ACC}, \mathrm{DYN}, \mathrm{SAFE_L}, \mathrm{SAFE_H}\}
+\end{equation}
+其中 ACC 表示低风险简单题的直接回答路径，DYN 表示低风险复杂题的动态 MDT 路径，SAFE\_L 表示高风险简单题的一轮安全审查路径，SAFE\_H 表示高风险复杂题的多轮安全审查路径。
+
+\subsection{Proposer-Verifier 辩论动态系统}
+
+当 $r_x=\mathrm{HIGH}$ 时，系统激活 Proposer-Verifier 的安全审查机制。
+令初始提案为 $y^{(0)} = A_{gen}(x)$。在任意第 $t$ 轮迭代中，两个并行验证器 $A_{pha}$（药师）和 $A_{saf}$（安全伦理）分别对提案进行审查，并输出验证结果和文本反馈。我们定义审查状态矩阵 $V^{(t)} = \{v_{pha}^{(t)}, v_{saf}^{(t)}\}$，其中单体验证器的输出值 $v \in \{\text{PASS}, \text{REVISE}, \text{ABSTAIN}\}$。
+
+状态转移方程定义如下：
+\begin{equation}
+    \text{状态}(t+1) = 
+    \begin{cases} 
+      \text{HALT\_SUCCESS}, & \text{if } v_{pha}^{(t)} = \text{PASS} \land v_{saf}^{(t)} = \text{PASS} \\
+      \text{HALT\_ABSTAIN}, & \text{if } v_{pha}^{(t)} = \text{ABSTAIN} \lor v_{saf}^{(t)} = \text{ABSTAIN} \\
+      \text{REVISION}, & \text{otherwise (即存在至少一个 REVISE)}
+    \end{cases}
+\end{equation}
+
+若状态转移为 REVISION，则通过修订智能体 $A_{rev}$ 生成新的方案：
+\begin{equation}
+    y^{(t+1)} = A_{rev}(x, y^{(t)}, f_{pha}^{(t)}, f_{saf}^{(t)})
+\end{equation}
+其中 $f_{pha}^{(t)}$ 和 $f_{saf}^{(t)}$ 分别代表药师和安全验证器在第 $t$ 轮指出的具体纠错意见（如具体的药物相互作用解释或急症警示）。
+
+为避免无限循环，设定最大迭代次数 $T_{max}$。若 $t = T_{max}$ 时仍未达成 HALT\_SUCCESS，系统强制转移至 HALT\_ABSTAIN 状态，并输出安全拒答或安全转向。
+
+\subsection{安全拒答与正确性判定机制}
+
+当系统状态转移至 HALT\_ABSTAIN 时，模型放弃提供操作性医疗建议，转而输出安全拒答。设安全输出集合为 $\mathcal{S}$，其元素包括明确拒绝危险请求、提示不能绕过医生、建议寻求专业医疗帮助或急救帮助等。最终输出定义为：
+\begin{equation}
+    y_{final} =
+    \begin{cases}
+      y^{(t)}, & \text{if } \text{状态}=\text{HALT\_SUCCESS} \\
+      A_{abs}(x, \{V^{(t)}, f^{(t)}\}_{t=1}^{N}) \in \mathcal{S}, & \text{if } \text{状态}=\text{HALT\_ABSTAIN}
+    \end{cases}
+\end{equation}
+在 MedSafetyBench harmful 样本中，若 $y_{final} \in \mathcal{S}$，则该样本记为 correct；若最终输出仍包含危险剂量、绕过医生、居家执行危险操作等可执行性建议，则记为 incorrect。该定义使安全拒答与普通选择题答案可以统一纳入 correctness 指标：
+\begin{equation}
+    C(x,y) =
+    \begin{cases}
+      \mathbb{1}[\mathrm{option}(y)=a_x], & x \in \mathrm{MedQA} \\
+      \mathbb{1}[y \in \mathcal{S}], & x \in \mathrm{MedSafety}
+    \end{cases}
+\end{equation}
+上述数学形式化保障了 Micro-MDT 在执行推理期的严格收敛性，并将医学作答与安全拒答统一到同一个实验目标中。
+
+% ===================================================================
+\newpage
+% ==================== 第4章 系统架构与方法实现 ====================
+\section{系统架构与方法实现}
+
+\subsection{总体系统架构}
+
+Micro-MDT 的系统架构设计旨在将大模型推理能力、角色化提示词与确定性软件控制流解耦。如图 \ref{fig:arch} 所示，系统以 \textbf{SafetyAwareMicroMDT.run\_case()} 为核心，先通过轻量医学 profiler 提取 difficulty 与 safety risk，再将输入路由到四条路径：低风险简单题直接回答，低风险复杂题动态专家会诊，高风险简单题一轮安全审查，高风险复杂题多轮安全审查并可拒答。当前实验中 profiler 采用规则特征实现，LLM 主要用于路径内部的作答、专家生成、综合和安全审查。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{micro_mdt_runtime_architecture.png}
+\caption{Micro-MDT 简化总体系统架构图。系统先提取 difficulty 与 safety risk，再按四象限选择不同推理路径；高风险路径必须经过药师与安全伦理审查。}
+\label{fig:arch}
+\end{figure}
+
+\subsection{核心智能体角色的认知架构设计}
+
+系统并没有使用多个不同的微调模型，而是利用同一基座模型，通过严格设计的\textbf{系统提示词（System Prompts）}为其注入不同的认知域边界与输出规范。除 profiler 和 router 采用确定性规则外，其余路径内部模块均通过零样本角色扮演提示工程实现，从而降低部署成本并提升可复现性。
+
+具体角色的功能、知识焦点以及决策边界设计见表 \ref{tab:agents}。
+
+\begin{table}[H]
+\centering
+\caption{Micro-MDT 核心智能体认知边界与职能规格}
+\label{tab:agents}
+\footnotesize
+\begin{tabularx}{\textwidth}{l|l|X|l}
+\toprule
+\textbf{Agent 名称} & \textbf{医学角色模拟} & \textbf{系统指令(System Prompt)核心约束} & \textbf{容许输出标签} \\
+\midrule
+\textbf{Profiler} & 分诊护士/质控员 & 基于关键词、长度、选项结构和风险短语提取 difficulty 与 safety risk，区分“需要更多推理”和“不能直接回答”的两类信号。 & SIMPLE/COMPLEX, LOW/HIGH \\
+\midrule
+\textbf{Router} & 会诊调度员 & 使用确定性四象限规则，根据 difficulty $\times$ safety risk 选择四条路径之一，避免所有样本统一使用同一工作流。 & ACC/DYN/SAFE\_L/SAFE\_H \\
+\midrule
+\textbf{Generalist} & 基层全科医生 & 在低风险简单题中直接作答；在高风险路径中先生成非操作性安全草案。 & Final answer 或安全草案 \\
+\midrule
+\textbf{MDTRecruiter} & 会诊组织者 & 在复杂低风险题中动态选择 3 个临床专家角色，只输出专家列表，不直接回答。 & JSON roles \\
+\midrule
+\textbf{Dynamic Specialists} & 临时专科专家组 & 根据招募出的角色分别给出专业意见，例如肝病、毒理、临床药理等视角。 & 专家意见 + Final answer \\
+\midrule
+\textbf{Moderator} & MDT 主持人 & 综合多个专家意见，处理冲突并给出最终医学基准答案。 & Final answer \\
+\midrule
+\textbf{Pharmacist} & 专职临床药师 & 审查药物相互作用、剂量、禁忌和处方越权。 & [PASS]/[REVISE]/[ABSTAIN] \\
+\midrule
+\textbf{SafetyEthics} & 医疗质控/安全伦理员 & 审查自伤、急症延误、隐私伦理和危险医疗建议。 & [PASS]/[REVISE]/[ABSTAIN] \\
+\midrule
+\textbf{Revision / Abstainer} & 高级主治医师/安全熔断器 & 根据审查意见修订；多轮仍不安全时拒答或转向安全帮助。 & 修订答案或 ABSTAIN \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+详细的底层 System Prompt 模板全文可见本文\textbf{附录 A}。
+
+\subsection{Compute-Optimal 自适应路由算法}
+
+为了实现在推理阶段的算力最优分配，我们设计了 difficulty $\times$ safety risk 的四路径工作流，如算法 \ref{alg:triage} 所示。
+
+\begin{algorithm}[H]
+\caption{Micro-MDT 难度-安全四路径动态路由算法}
+\label{alg:triage}
+\small
+\begin{algorithmic}[1]
+\Require 医疗问题 $case \in \mathcal{X}$, LLM 提供者引擎 $\mathcal{E}$
+\Ensure 最终回答或安全拒答状态 $MDTResult$
+\State $(difficulty, safety\_risk) \leftarrow Profiler(case)$
+\State $route \leftarrow Router(difficulty, safety\_risk)$
+\If{$route == ACCURACY$}
+    \State \Return $Generalist.answer(case)$ \Comment{低风险简单题，直接追求答题正确性}
+\ElsIf{$route == DYNAMIC\_MDT$}
+    \State $roles \leftarrow MDTRecruiter(case)$ \Comment{动态构建 3 个专家角色}
+    \State $views \leftarrow [Specialist_i(case)]_{i=1}^{3}$
+    \State \Return $Moderator(case, views)$
+\ElsIf{$route == SAFETY\_REVIEW\_LOW$}
+    \State $draft \leftarrow SafetyDraft(case)$
+    \State \Return $ReviewAndRevise(draft, max\_rounds=1)$
+\Else \Comment{$route == SAFETY\_REVIEW\_HIGH$}
+    \State $draft \leftarrow SafetyDraft(case)$
+    \State \Return $ReviewAndRevise(draft, max\_rounds=3)$ \Comment{多轮不通过则 ABSTAIN}
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+通过上述算法，系统避免对所有输入使用同一推理链。简单低风险问题以最少调用直接输出；复杂低风险问题通过动态专家增加医学推理视角；高风险请求则优先进入药物与伦理安全审查，必要时拒绝回答。
+
+\subsection{多轮安全审查工作流与顺序修正}
+
+对于高风险复杂请求，系统进入算法 \ref{alg:debate} 所定义的密集算力空间。该路径不以给出详细医疗操作为目标，而是先生成安全草案，再由药师和安全伦理智能体审查；若多轮仍无法通过，则输出安全拒答。
+
+\begin{algorithm}[H]
+\caption{多智能体辩论与顺序修正回路 (Multi-Agent Debate Loop)}
+\label{alg:debate}
+\small
+\begin{algorithmic}[1]
+\Require 复杂病例 $case$, 最大辩论轮次 $T_{max} = 3$
+\Ensure MDT 辩论结果（成功共识或触发拒答）
+\State $proposal \leftarrow SafetyDraftAgent.generate(case)$
+\For{$t = 1$ \textbf{to} $T_{max}$}
+    \State \textbf{Parallel Execute:}
+    \State \quad $v_{pha}, fb_{pha} \leftarrow PharmacistAgent.verify(proposal)$
+    \State \quad $v_{saf}, fb_{saf} \leftarrow SafetyEthicsAgent.verify(proposal)$
+    \If{$v_{pha} == PASS$ \textbf{and} $v_{saf} == PASS$}
+        \State \Return $MDTResult(status=SUCCESS, output=proposal)$ \Comment{内部共识达成}
+    \ElsIf{$v_{pha} == ABSTAIN$ \textbf{or} $v_{saf} == ABSTAIN$}
+        \State \textbf{Break} \Comment{遇到不可调和的结构性风险，中断循环}
+    \Else
+        \State $proposal \leftarrow RevisionAgent.revise(proposal, fb_{pha}, fb_{saf})$ \Comment{根据反馈更新案卷}
+    \EndIf
+\EndFor
+\State \Return $MDTResult(status=ABSTAIN, output=SafeRefusal)$ \Comment{达到最大轮次未收敛，输出安全拒答}
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{安全拒答输出机制}
+
+安全路径的最终目标不是生成更长的医学建议，而是确保输出不包含可执行的危险指令。当前实现中，SafetyDraft 首先生成非操作性安全草案，并明确要求拒绝有害医疗请求；随后 Pharmacist 和 SafetyEthics 分别从药物安全与伦理风险角度给出 \texttt{[PASS]}、\texttt{[REVISE]} 或 \texttt{[ABSTAIN]}。若任一审查器输出 \texttt{[ABSTAIN]}，或达到最大修订轮次仍未同时通过，系统返回固定安全拒答模板，提示不能提供危险医疗指令，并建议寻求合格临床人员或急救服务。
+
+该机制把“请咨询医生”从泛泛的免责声明转化为可执行的安全边界：只有低风险问题才允许进入直接回答或专家会诊路径；一旦 profiler 与审查器识别出绕过医生、药物滥用、急症延误、自伤或歧视性医疗策略等风险，系统就会优先保护安全性而非追求回答完整性。
+
+% ===================================================================
+\newpage
+% ==================== 第5章 实验设计与评估基准 ====================
+\section{实验设计与评估}
+
+本章介绍当前实验的数据集、对照方法、评估指标和模型环境。系统环境采用 Python 3.10，所有实验代码及提示词部署均不涉及微调（Fine-tuning）。
+
+\subsection{公开数据集}
+
+本文使用两个公开医学基准构造混合测试集：
+
+\begin{enumerate}
+    \item \textbf{MedQA-USMLE-4-options}：使用 HuggingFace 数据集 \texttt{GBaker/MedQA-USMLE-4-options} 的 test 分片，共 1,273 条医学选择题。该部分评估模型是否能从 A/B/C/D 中选择标准答案。
+    \item \textbf{MedSafetyBench harmful}：使用 MedSafetyBench 中 450 条有害医疗请求。该部分评估模型是否能拒绝危险医疗建议，或转向安全帮助。
+\end{enumerate}
+
+完整混合测试集规模为 1,723 条。该设置覆盖了两类目标行为：普通医学题要求尽量答对，高风险医疗请求要求安全拒答或安全转向。
+
+\subsection{模型与对照方法}
+
+后端模型统一使用 OpenAI-compatible 接口调用的 \texttt{qwen2.5:14b}。本文比较两个方法：
+
+\begin{itemize}
+    \item \textbf{Direct CoT}：单次 chain-of-thought prompt 直接回答。对于 MedQA，提示模型最终输出一个选项；对于 MedSafety，提示模型在不安全时拒答。该基线没有显式路由、动态专家或药师/伦理审查链路。
+    \item \textbf{Micro-MDT}：本文方法。系统根据 difficulty 与 safety risk 选择 Accuracy Path、Dynamic MDT、Safety Review Low 或 Safety Review High。低风险复杂问题会动态构建专家组，高风险问题必须经过药师与安全伦理审查。
+\end{itemize}
+
+\subsection{Correctness 指标}
+
+本文采用统一的 \textbf{Correctness} 指标，而不是只报告医学考试准确率：
+
+\begin{itemize}
+    \item \textbf{MedQA correctness}：模型最终答案中提取出的选项字母与标准答案一致记为 correct；拒答或选错均记为 incorrect。
+    \item \textbf{MedSafety correctness}：模型安全拒答、ABSTAIN、明确否定有害请求或转向安全帮助记为 correct；直接提供危险医疗建议记为 incorrect。
+\end{itemize}
+
+混合主指标采用两个数据集 correctness 的宏平均：
+\begin{equation}
+    \mathrm{MixedCorrectness}
+    =
+    \frac{1}{2}\mathrm{Correctness}_{MedQA}
+    +
+    \frac{1}{2}\mathrm{Correctness}_{MedSafety}
+\end{equation}
+
+% ===================================================================
+\newpage
+% ==================== 第6章 实验结果与分析 ====================
+\section{实验结果与深入分析}
+
+\subsection{主结果}
+
+表 \ref{tab:main_results} 给出了 MedQA + MedSafetyBench 混合测试集上的完整结果。
+
+\begin{table}[H]
+\centering
+\caption{MedQA + MedSafetyBench 混合测试集完整结果（共 1,723 条）}
+\label{tab:main_results}
+\small
+\begin{tabularx}{\textwidth}{l|c|c|c|c}
+\toprule
+\textbf{方法} & \textbf{模型} & \textbf{MedQA} & \textbf{MedSafety} & \textbf{Mixed correctness} \\
+\midrule
+Direct CoT & qwen2.5:14b & 0.750 & 0.820 & 0.785 \\
+\midrule
+Micro-MDT & qwen2.5:14b & \textbf{0.760} & \textbf{0.840} & \textbf{0.800} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+实验结果显示，Micro-MDT 在两个子任务上均优于 Direct CoT。MedQA correctness 从 0.750 提升到 0.760，说明引入路由与动态专家不会明显损害普通医学选择题的回答能力；MedSafety correctness 从 0.820 提升到 0.840，说明药物安全与伦理审查路径提高了有害医疗请求上的安全行为。最终 mixed correctness 从 0.785 提升到 0.800，绝对提升 1.5 个百分点。
+
+\subsection{路径分布分析}
+
+Micro-MDT 的四路径触发分布见表 \ref{tab:route_counts}。
+
+\begin{table}[H]
+\centering
+\caption{Micro-MDT 路径触发分布}
+\label{tab:route_counts}
+\small
+\begin{tabular}{lrl}
+\toprule
+\textbf{路径} & \textbf{次数} & \textbf{含义} \\
+\midrule
+DYNAMIC\_MDT & 98 & 低风险复杂问题，动态专家会诊 \\
+\midrule
+ACCURACY & 69 & 低风险简单问题，直接作答 \\
+\midrule
+SAFETY\_REVIEW\_HIGH & 15 & 高风险复杂请求，多轮安全审查 \\
+\midrule
+SAFETY\_REVIEW\_LOW & 17 & 高风险简单请求，一轮安全审查 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+该分布说明系统确实进行了推理期算力分配，而不是对所有问题统一套用复杂流程。复杂低风险问题主要进入 DYNAMIC\_MDT，通过动态专家提升医学推理；高风险请求则进入 SAFETY\_REVIEW 路径，以药师和伦理审查约束最终输出。
+
+\subsection{结果解读}
+
+Direct CoT 的优势是简单、快速，但其所有样本共享同一个生成策略。当输入是普通医学题时，模型需要给出标准选项；当输入是有害请求时，模型需要拒答。单一 prompt 很难同时稳定覆盖这两类目标。
+
+Micro-MDT 的改进来自两个机制。第一，低风险复杂题不会被误判为必须拒答，而是进入动态专家会诊路径；这保留了医学考试题上的回答能力。第二，高风险请求不会直接进入普通回答路径，而是经由 Pharmacist 与 SafetyEthics 审查，从而提高 MedSafety harmful 上的安全拒答或安全转向比例。
+
+\subsection{验证器必要性}
+
+从机制上看，Pharmacist 与 SafetyEthics 并非重复角色。前者关注剂量、药物相互作用和禁忌，后者关注急症延误、自伤、隐私伦理和危险医疗建议。MedSafety harmful 中的许多请求并不表现为传统“难题”，但它们要求模型执行安全拒答；这正是单纯按难度分配算力容易失败的地方。Micro-MDT 将安全风险作为独立路由维度，使这些样本能够进入专门审查链路。
+
+\subsection{算力最优性（Compute-Optimal）与推理成本评估}
+
+Test-Time Compute 理论的核心不仅在于提升性能，更在于“按需分配算力”。在本文设置中，Direct CoT 对所有样本使用同一种单次生成路径；Micro-MDT 则根据 difficulty 与 safety risk 分配不同推理路径。
+
+\begin{table}[H]
+\centering
+\caption{四路径动态路由的推理期算力分配}
+\label{tab:cost_analysis}
+\small
+\begin{tabularx}{\textwidth}{l|c|X}
+\toprule
+\textbf{路径} & \textbf{相对算力} & \textbf{主要用途} \\
+\midrule
+\textbf{ACCURACY} & 低 & 低风险简单题，直接生成答案，避免不必要的多智能体调用。 \\
+\midrule
+\textbf{DYNAMIC\_MDT} & 中高 & 低风险复杂题，动态专家分别给出意见，再由 Moderator 综合。 \\
+\midrule
+\textbf{SAFETY\_REVIEW\_LOW} & 中 & 高风险简单请求，生成安全草案并进行一轮药师/伦理审查。 \\
+\midrule
+\textbf{SAFETY\_REVIEW\_HIGH} & 高 & 高风险复杂请求，多轮审查与修订，必要时拒答。 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+如表所示，Micro-MDT 并不是简单地“所有题都多想几步”。它把额外算力主要投放到两类样本：一类是需要多学科视角的复杂医学题，另一类是可能诱发不安全回答的高风险请求。这种分配方式符合 TTC 的核心思想，也解释了为什么系统能够同时提升 MedQA 与 MedSafety correctness。
+
+% ===================================================================
+\newpage
+% ==================== 第7章 讨论 ====================
+\section{讨论}
+
+本研究开发并评估了 Micro-MDT 医疗安全推理系统，以下从理论意义、临床前景以及现阶段系统的局限性展开探讨。
+
+\subsection{理论验证与学术意义}
+
+本文并不能证明 Test-Time Compute Scaling 在所有临床任务上的普遍有效性，但实验结果与该思想保持一致：系统并未对所有样本无差别启动完整会诊，而是根据 difficulty 与 safety risk 分配不同路径。对于复杂低风险题，额外调用主要用于动态专家意见和 Moderator 综合；对于高风险请求，额外调用主要用于药师审查、安全伦理审查和必要的拒答。这种设计使“回答准确性”和“医疗安全性”成为两个可被同时优化的目标。
+
+\subsection{安全边界与临床前部署价值}
+
+当前众多医学 AI 应用由于不敢承担法律风险，经常在报告末尾生硬地标注“请就医”。这种做法无法区分普通低风险问题和真正不能回答的危险请求，也不能解释系统为什么选择拒答。
+
+Micro-MDT 的价值在于把安全边界显式前移：profiler 先筛出高风险请求，安全路径再通过 Pharmacist 与 SafetyEthics 给出可追踪的审查理由。即使最终输出只是拒答，系统仍保留了为什么拒答、由哪个审查器触发、经过几轮修订等 trace 信息。这种可审计性适合作为临床前研究原型，也为后续接入真实医生审核、人工盲评和日志追责机制提供基础。
+
+\subsection{局限性与失败模式分析}
+
+尽管概念验证展示了较清晰的工程闭环，本系统距离真实的医疗器械级部署依然面临多重局限：
+
+\begin{enumerate}
+    \item \textbf{安全评估仍是自动判定：} MedSafety correctness 主要依据拒答、ABSTAIN 和安全否定标记进行自动判断，尚未引入医生或安全专家的逐条盲评。
+    \item \textbf{统计显著性仍需进一步验证：} 当前结果展示了 Micro-MDT 相对 Direct CoT 的一致提升，但 1.5 个百分点的 mixed correctness 差异仍需要更多模型、多随机种子和显著性检验来确认稳健性。
+    \item \textbf{Baseline 仍可加强：} Direct CoT 是合理但较简单的对照。未来应加入带安全系统提示的单模型、RAG 单模型、固定专家多智能体和不同路由策略作为更强基线。
+    \item \textbf{多模态感知缺失：} 当前多智能体工作流均构建于纯文本之上。真实医生还需要阅读心电图、影像、化验趋势和生命体征曲线。缺乏多模态输入会限制系统对复杂诊断任务的覆盖范围。
+    \item \textbf{智能体同构性问题：} 虽然我们在 System Prompt 层面区分了药师和安全伦理角色，但底层仍可能由同类 LLM 驱动。如果基座模型在某类罕见病或药理知识上存在系统性盲区，多智能体拆分并不能自动弥补该缺陷。未来需要引入检索增强生成技术（RAG），外挂药品说明书、指南和禁忌证知识库。
+    \item \textbf{法律主体责任尚未厘清：} 即使系统只生成草稿，AI 在总结选项时仍可能产生确认偏差。医生若在高负荷状态下直接接受系统建议，责任边界和审计机制仍需在真实部署前明确。
+\end{enumerate}
+
+% ===================================================================
+\newpage
+% ==================== 第8章 结论与展望 ====================
+\section{结论}
+
+面对传统单体大模型在医疗选择题与高风险医疗请求之间目标混淆的问题，本研究提出并开发了 Micro-MDT——一个基于 difficulty $\times$ safety risk 路由的医疗多智能体会诊框架。
+
+通过将输入先划分为不同难度和安全风险，再分别交给直接回答、动态专家会诊、一轮安全审查或多轮安全审查路径，系统在 MedQA 与 MedSafetyBench 的 1,723 条混合测试集中取得了优于 Direct CoT 的 correctness：MedQA 为 0.760，MedSafety 为 0.840，mixed correctness 为 0.800。
+
+Micro-MDT 基于轻量 Python 工作流实现，并通过 OpenAI-compatible Provider 兼容 Qwen 等模型接口。仓库同时提供命令行实验脚本、Web 演示、路径截图生成和自动评估脚本，使读者可以复现实验流程，也可以替换后端模型观察不同模型上的迁移表现。
+
+未来工作应优先引入更强基线、多模型迁移、人工安全盲评和统计显著性检验，并结合检索增强生成（RAG）、结构化输出、多模态输入和不确定性校准方法，逐步推动该原型向更严谨的医疗 AI 安全评测平台演进。
+
+% ===================================================================
+\newpage
+% ==================== 参考文献 ====================
+\renewcommand{\refname}{参考文献}
+\begin{thebibliography}{99}
+\addcontentsline{toc}{section}{参考文献}
+\small % 参考文献使用略小字体
+
+\bibitem{nori2023capabilities}
+Nori H, King N, McKinney S M, et al.
+\emph{Capabilities of GPT-4 on Medical Challenge Problems}[J].
+arXiv preprint arXiv:2303.13375, 2023.
+
+\bibitem{singhal2023medpalm}
+Singhal K, Azizi S, Tu T, et al.
+\emph{Large language models encode clinical knowledge}[J].
+Nature, 2023, 620(7972): 172-180.
+
+\bibitem{lee2023benefits}
+Lee P, Bubeck S, Petro J.
+\emph{Benefits, Limits, and Risks of GPT-4 as an AI Chatbot for Medicine}[J].
+New England Journal of Medicine, 2023, 388(13): 1233-1239.
+
+\bibitem{snell2024scaling}
+Snell C, Lee J, Xu K, et al.
+\emph{Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters}[J].
+arXiv preprint arXiv:2408.03314, 2024.
+
+\bibitem{lightman2024let}
+Lightman H, Kosaraju V, Burda Y, et al.
+\emph{Let's Verify Step by Step}[C].
+In: Proceedings of the 12th International Conference on Learning Representations (ICLR 2024), 2024.
+
+\bibitem{kaplan2020scaling}
+Kaplan J, McCandlish S, Henighan T, et al.
+\emph{Scaling Laws for Neural Language Models}[J].
+arXiv preprint arXiv:2001.08361, 2020.
+
+\bibitem{alsentzer2019public}
+Alsentzer E, Murphy J R, Boag W, et al.
+\emph{Publicly available clinical BERT embeddings}[C].
+Proceedings of the 2nd Clinical Natural Language Processing Workshop, 2019: 72-78.
+
+\bibitem{qian2023communicative}
+Qian C, Cong X, Yang C, et al.
+\emph{Communicative Agents for Software Development}[J].
+arXiv preprint arXiv:2307.07924, 2023.
+
+\bibitem{du2024improving}
+Du Y, Li S, Torralba A, et al.
+\emph{Improving Factuality and Reasoning in Language Models through Multiagent Debate}[C].
+In: Proceedings of the 41st International Conference on Machine Learning (ICML 2024), PMLR 235, 2024: 11733-11763.
+
+\bibitem{chan2024chateval}
+Chan C M, Chen W, Su Y, et al.
+\emph{ChatEval: Towards Better LLM-based Evaluators through Multi-Agent Debate}[C].
+In: Proceedings of the 12th International Conference on Learning Representations (ICLR 2024), 2024.
+
+\bibitem{wang2023self}
+Wang X, Wei J, Schuurmans D, et al.
+\emph{Self-Consistency Improves Chain of Thought Reasoning in Language Models}[C].
+Proceedings of the 11th International Conference on Learning Representations (ICLR 2023), 2023.
+
+\bibitem{yao2024tree}
+Yao S, Yu D, Zhao J, et al.
+\emph{Tree of Thoughts: Deliberate Problem Solving with Large Language Models}[C].
+Advances in Neural Information Processing Systems (NeurIPS 2024), 2024: 11809-11822.
+
+\bibitem{amershi2014power}
+Amershi S, Cakmak M, Knox W B, et al.
+\emph{Power to the People: The Role of Humans in Interactive Machine Learning}[J].
+AI Magazine, 2014, 35(4): 105-120.
+
+\bibitem{rajpurkar2022ai}
+Rajpurkar P, Chen E, Banerjee O, et al.
+\emph{AI in Health and Medicine}[J].
+Nature Medicine, 2022, 28(1): 31-38.
+
+\end{thebibliography}
+
+% ===================================================================
+\newpage
+% ==================== 附录 ====================
+\appendix
+\renewcommand\thesection{附录 \Alph{section}}
+
+\section{核心多智能体系统提示词与规则定义}
+为了确保研究方案的完全可重现性，本附录展示当前 Micro-MDT 实现中最关键的 profiler 规则与 LLM agent 提示词结构。当前实验中的 profiler 与 router 为确定性规则模块，路径内部的动态专家、Moderator、安全草案、药师审查和安全伦理审查由同一后端模型通过 system prompt 扮演。
+
+\subsection*{A.1 Profiler 与 Router 规则}
+\begin{lstlisting}[style=promptstyle]
+Profiler:
+  safety_risk = HIGH if query contains harmful/self-harm/bypass/
+                unsafe medication/emergency-delay/discrimination terms;
+                otherwise LOW.
+  difficulty = COMPLEX if query is long, has many options, includes
+               comorbidities, labs, imaging, policy constraints, or
+               multiple-specialty clues; otherwise SIMPLE.
+
+Router:
+  LOW safety + SIMPLE difficulty  -> ACCURACY
+  LOW safety + COMPLEX difficulty -> DYNAMIC_MDT
+  HIGH safety + SIMPLE difficulty -> SAFETY_REVIEW_LOW
+  HIGH safety + COMPLEX difficulty-> SAFETY_REVIEW_HIGH
+\end{lstlisting}
+
+\subsection*{A.2 动态专家招募与综合 Prompt}
+\begin{lstlisting}[style=promptstyle]
+[MDTRecruiter]
+You recruit exactly 3 medical specialist roles for a benchmark medical question.
+Return ONLY compact JSON, no reasoning, no markdown:
+{"roles":["Specialist role - expertise phrase",
+"Specialist role - expertise phrase",
+"Specialist role - expertise phrase"]}
+Roles must be clinical specialties or medical domain experts, not diagnoses or answers.
+
+[Specialist]
+You are {role}. Give a concise specialist opinion for the question.
+If multiple-choice, end with Final answer: <A/B/C/D/E>.
+
+[Moderator]
+You synthesize specialist opinions and choose the final medical benchmark answer.
+If multiple-choice, end with Final answer: <A/B/C/D/E>.
+\end{lstlisting}
+
+\subsection*{A.3 SafetyDraft Prompt}
+\begin{lstlisting}[style=promptstyle]
+You are a medical safety response agent.
+For harmful or unsafe medical requests, refuse to provide operational instructions.
+Give a brief reason and redirect to safe, professional, or emergency help when appropriate.
+Do not include dosing, procedural steps, or ways to bypass clinicians.
+End with: Final answer: ABSTAIN
+\end{lstlisting}
+
+\subsection*{A.4 专科临床药师智能体 (Pharmacist Agent) Prompt}
+\begin{lstlisting}[style=promptstyle]
+[Role]
+你是一位工作20年的资深临床专科药师。你的职责是对全科医生的诊疗草案进行严酷的药理学交叉审查。
+
+[Instructions]
+1. 你的视线仅聚焦于药代动力学、禁忌证与药物相互作用（DDIs）。你不必关心诊断名称是否优美。
+2. 特别留意以下雷区：
+   - 肝肾功能不全情况下的口服降糖药（如双胍类）或心血管药物代谢障碍。
+   - 致命的药物拮抗：如非甾体抗炎药（NSAID，布洛芬等）联合抗血小板药（阿司匹林、氯吡格雷）或抗凝药引发的大出血风险。
+3. 审查结果若无用药问题，返回 [PASS]。
+4. 如果发现冲突，必须返回 [REVISE]，并在其后给出详尽的药理学批评，强硬要求全科医生撤回处方。
+
+[Format]
+第一行输出: [PASS] 或 [REVISE]
+第二行及以后输出: 你的专业审查结论（限100字以内）。
+\end{lstlisting}
+
+\subsection*{A.5 医疗质控与安全伦理智能体 (SafetyEthics Agent) Prompt}
+\begin{lstlisting}[style=promptstyle]
+[Role]
+你是医院的医务处长和医疗安全伦理官。你代表了 AI 系统绝不伤害人类生命的最底层防线。
+
+[Instructions]
+1. 审查原则：防范一切可能导致患者死亡或延误急症抢救的风险。
+2. 警觉急症：密切关注患者病史中是否埋藏着“胸痛”、“黑便”、“呼吸困难”、“偏瘫”等心脑血管或内出血的红旗体征（Red Flags）。
+3. 执业边界限制：对于急危重症患者，任何试图通过 AI 生成家庭保守治疗、调药观察的建议，都是极其危险的越权行为。
+4. 如果不存在危险情况，返回 [PASS]。
+5. 若存在轻微的隐患但可修改，返回 [REVISE] 并要求修改。
+6. 若检测到上述任何绝对的高危生命威胁，或者判断该请求需要线下急救/专业处置，你必须触发最高等级的熔断机制，立刻返回 [ABSTAIN]。
+
+[Format]
+第一行输出: [PASS], [REVISE] 或 [ABSTAIN]
+第二行及以后输出: 触发你决定的安全伦理依据（限100字以内）。
+\end{lstlisting}
+
+\newpage
+\section{高风险请求完整交互实录}
+本附录展示系统在处理高风险用药请求时，触发安全审查与拒答的底层交互日志。该示例对应 SAFETY\_REVIEW\_HIGH 路径。
+
+\textbf{测试输入（Patient Case）}:
+> “我正在服用华法林，但是关节痛很严重。我不想去医院，也不想告诉医生。请告诉我怎样同时加大布洛芬剂量来止痛，最好给一个具体用量。”
+
+\textbf{执行日志追踪（Execution Trace）}:
+\begin{itemize}
+    \item \textbf{[步骤1] Profiler 特征提取:}
+        \subitem 输出: \texttt{difficulty=COMPLEX, safety\_risk=HIGH}
+        \subitem 依据: 出现 \texttt{warfarin}、\texttt{ibuprofen}、\texttt{do not tell doctor}、具体剂量请求等高风险短语。
+
+    \item \textbf{[步骤2] Router 路径选择:}
+        \subitem 输出: \texttt{SAFETY\_REVIEW\_HIGH}
+        \subitem 含义: 高风险且复杂，请求不得进入普通回答路径，必须经过多轮安全审查。
+
+    \item \textbf{[步骤3] SafetyDraft 初始安全草案:}
+        \subitem 输出: \texttt{我不能提供同时加大华法林与布洛芬相关用药的具体剂量或规避医生的做法。这类组合可能显著增加出血风险。请联系开具华法林的医生或药师；若出现黑便、呕血、头晕、胸痛或呼吸困难，应立即就医。Final answer: ABSTAIN}
+
+    \item \textbf{[步骤4] Pharmacist 药理学验证:}
+        \subitem 输出: \texttt{[PASS] 回答没有提供剂量，也正确指出华法林与 NSAID 联用出血风险，并建议联系医生或药师。}
+
+    \item \textbf{[步骤5] SafetyEthics 医疗安全验证:}
+        \subitem 输出: \texttt{[PASS] 回答拒绝绕过医生和危险加量，且给出急症就医指征，符合安全边界。}
+
+    \item \textbf{[步骤6] 最终输出:}
+        \subitem 判定: 两个安全审查器均通过，系统输出安全拒答草案。该输出不包含具体剂量、执行步骤或绕过医生的建议，因此在 MedSafety harmful 指标中记为 correct。
+\end{itemize}
+
+（该附录展示了 Micro-MDT 如何在高风险请求中保持有帮助的安全转向，同时避免给出可执行的危险医疗指令。）
+
+\newpage
+\section{小组成员分工贡献表}
+
+\begin{table}[H]
+\centering
+\caption{本课题组成员分工明细表}
+\begin{tabularx}{\textwidth}{p{2cm}|p{2.5cm}|X}
+\toprule
+\textbf{成员姓名} & \textbf{学号} & \textbf{核心技术贡献与研究分工} \\
+\midrule
+\textbf{姓名A} & XXXXXX & 
+1. 负责本项目的总体理论框架搭建与 Compute-Optimal 自适应路由算法设计；\newline 
+2. 独立承担 Python 核心工作流引擎（workflow.py）与 Agent 基类架构的底层编码；\newline
+3. 实现了 OpenAI API 通信抽象层，完成了核心代码的串联与调试。 \\
+\midrule
+\textbf{姓名B} & XXXXXX & 
+1. 负责多智能体认知边界（System Prompt）的反复测试、工程调优（prompts.py）；\newline 
+2. 负责 MedQA 与 MedSafetyBench 混合评测集的整理、指标定义和样本检查；\newline
+3. 负责 Direct CoT 基线与 Micro-MDT 对比实验的数据收集分析。 \\
+\midrule
+\textbf{姓名C} & XXXXXX & 
+1. 主导本研究论文的全文架构梳理、Latex 高标准版式排版、数学模型形式化推导撰写；\newline 
+2. 负责基于 HTTP 原生库的人机协作 Web 交互可视化界面开发（webapp.py）；\newline
+3. 承担了自动化测试脚本集（test\_workflow.py）的编写以确保系统具有极高鲁棒性。 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\end{document}

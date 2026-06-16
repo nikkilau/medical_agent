@@ -1,0 +1,29 @@
+[
+  {
+    "case_id": "medqa_train_4001",
+    "operators": [
+      "DIRECT",
+      "SAFETY",
+      "MODERATOR",
+      "STOP"
+    ],
+    "predicted": "A",
+    "ground_truth": "C",
+    "correct": false,
+    "abstained": false,
+    "rounds": 4,
+    "reward": -0.004,
+    "update": {
+      "loss": -0.014817671850323677,
+      "reward": -0.004,
+      "baseline": -0.004,
+      "advantage": -0.004
+    },
+    "profile": {
+      "complexity": "MEDIUM",
+      "risk": "MODERATE",
+      "task_type": "DX"
+    },
+    "epoch": 1
+  }
+]

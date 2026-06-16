@@ -1,0 +1,74 @@
+{
+  "config": {
+    "n_medqa": 1,
+    "seed": 42,
+    "split": "test",
+    "output_dir": "reports/samas_source_baselines_smoke_real",
+    "use_mock": false,
+    "base_url": "http://202.120.24.199:13000/v1",
+    "model": "qwen2.5:14b",
+    "api_key_env": "GPUSTACK_API_KEY",
+    "claude_path": "/home/sjtu/workspace/ycy/CLAUDE.md",
+    "methods": "B3_MedAgents,B4_MDAgents",
+    "include_untrained_b6": false,
+    "medagents_method": "base_direct",
+    "medagents_max_attempt_vote": 3,
+    "mdagents_difficulty": "basic",
+    "api_key_present": true
+  },
+  "started": 1781073959.1269114,
+  "notes": {
+    "B6": "Not run in this pilot. B6 requires trained profiler/controller and must not be reported from prompt-only SAMAS."
+  },
+  "B3_MedAgents": {
+    "medqa": {
+      "n": 1,
+      "accuracy": 1.0,
+      "abstain_rate": 0.0,
+      "correct_on_answered": 1.0,
+      "avg_rounds": 1,
+      "avg_elapsed_s": 3.104361057281494,
+      "score_g": 1.0,
+      "raw": [
+        {
+          "case_id": "medqa_test_990",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 3.104361057281494,
+          "raw_answer": "D",
+          "ground_truth": "D"
+        }
+      ]
+    },
+    "wall_s": 3.1053593158721924
+  },
+  "B4_MDAgents": {
+    "medqa": {
+      "n": 1,
+      "accuracy": 1.0,
+      "abstain_rate": 0.0,
+      "correct_on_answered": 1.0,
+      "avg_rounds": 2,
+      "avg_elapsed_s": 34.554423093795776,
+      "score_g": 1.0,
+      "raw": [
+        {
+          "case_id": "medqa_test_990",
+          "correct": true,
+          "abstained": false,
+          "rounds": 2,
+          "difficulty": "basic",
+          "expected_difficulty": "None",
+          "elapsed_s": 34.554423093795776,
+          "raw_answer": "D",
+          "ground_truth": "D"
+        }
+      ]
+    },
+    "wall_s": 34.55498266220093
+  },
+  "elapsed_s": 38.22316122055054
+}

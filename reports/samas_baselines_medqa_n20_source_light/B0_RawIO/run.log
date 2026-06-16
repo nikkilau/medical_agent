@@ -1,0 +1,31 @@
+[data] loading MedQA split=test n=20 seed=42
+[data] got 20 cases
+[provider] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=qwen2.5:14b
+[LLM Provider] model=qwen2.5:14b, endpoint=http://202.120.24.199:13000/v1/chat/completions
+
+=== B0_RawIO (20 MedQA cases) ===
+[1/20] ✗ pred=A gt=D diff=N/A r=1 t=28.4s
+[2/20] ✗ pred=B gt=C diff=N/A r=1 t=11.6s
+[3/20] ✓ pred=A gt=A diff=N/A r=1 t=19.1s
+[4/20] ✓ pred=D gt=D diff=N/A r=1 t=11.8s
+[5/20] ✓ pred=B gt=B diff=N/A r=1 t=14.4s
+[6/20] ✓ pred=B gt=B diff=N/A r=1 t=15.0s
+[7/20] ✓ pred=A gt=A diff=N/A r=1 t=26.9s
+[8/20] ✗ pred=A gt=B diff=N/A r=1 t=21.2s
+[9/20] ✓ pred=A gt=A diff=N/A r=1 t=25.4s
+[10/20] ✗ pred=A gt=B diff=N/A r=1 t=16.0s
+[11/20] ✓ pred=B gt=B diff=N/A r=1 t=15.7s
+[12/20] ✓ pred=B gt=B diff=N/A r=1 t=17.6s
+[13/20] ✗ pred=C gt=D diff=N/A r=1 t=15.5s
+[14/20] ✓ pred=B gt=B diff=N/A r=1 t=16.9s
+[15/20] ✓ pred=A gt=A diff=N/A r=1 t=27.5s
+[16/20] ✓ pred=C gt=C diff=N/A r=1 t=17.9s
+[17/20] ✓ pred=A gt=A diff=N/A r=1 t=30.9s
+[18/20] ✓ pred=C gt=C diff=N/A r=1 t=16.9s
+[19/20] ✓ pred=A gt=A diff=N/A r=1 t=27.3s
+[20/20] ✓ pred=D gt=D diff=N/A r=1 t=16.8s
+[B0_RawIO] acc=0.750 abstain=0.000 answered_acc=0.750 avg_rounds=1.00 wall=392.9s
+
+method,acc,abstain,answered_acc,avg_rounds,wall_s
+B0_RawIO,0.750,0.000,0.750,1.00,392.9
+[done] wrote reports/samas_baselines_medqa_n20_source_light/B0_RawIO/results.json

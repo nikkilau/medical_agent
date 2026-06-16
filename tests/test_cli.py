@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import patch
 
-from micro_mdt import cli
+import micro_mdt.cli as cli
 
 
 class CliTests(unittest.TestCase):
     def test_web_mode_passes_openai_compatible_options(self):
         with patch("micro_mdt.cli.load_env_file") as load_env_file:
-            with patch("micro_mdt.webapp.run_server") as run_server:
+            with patch("webapp.run_server") as run_server:
                 result = cli.main([
                     "--web",
                     "--provider",

@@ -1,0 +1,93 @@
+{
+  "config": {
+    "n_medqa": 500,
+    "seed": 42,
+    "split": "test",
+    "output_dir": "reports/samas_baselines_medqa_full_source",
+    "use_mock": false,
+    "base_url": "http://202.120.24.199:13000/v1",
+    "model": "qwen2.5:14b",
+    "embedding_model": "nomic-embed-text",
+    "api_key_env": "GPUSTACK_API_KEY",
+    "claude_path": "/home/sjtu/workspace/ycy/CLAUDE.md",
+    "methods": "B2_CoTSC_5",
+    "include_untrained_b6": false,
+    "medagents_method": "base_direct",
+    "medagents_max_attempt_vote": 3,
+    "mdagents_difficulty": "basic",
+    "samas_operator_checkpoint": "",
+    "samas_semantic_dim": 32,
+    "n_medqa_requested": 500,
+    "api_key_present": true
+  },
+  "started": 1781090711.9011075,
+  "B2_CoTSC_5": {
+    "medqa": {
+      "n": 5,
+      "accuracy": 0.8,
+      "abstain_rate": 0.0,
+      "correct_on_answered": 0.8,
+      "avg_rounds": 5.0,
+      "avg_elapsed_s": 107.80766892433167,
+      "score_g": 0.8,
+      "raw": [
+        {
+          "case_id": "medqa_test_990",
+          "correct": true,
+          "abstained": false,
+          "rounds": 5,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 108.72462272644043,
+          "raw_answer": "D",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_202",
+          "correct": false,
+          "abstained": false,
+          "rounds": 5,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 83.89440870285034,
+          "raw_answer": "B",
+          "ground_truth": "C"
+        },
+        {
+          "case_id": "medqa_test_1258",
+          "correct": true,
+          "abstained": false,
+          "rounds": 5,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 118.29831719398499,
+          "raw_answer": "A",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_277",
+          "correct": true,
+          "abstained": false,
+          "rounds": 5,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 131.9510202407837,
+          "raw_answer": "D",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_427",
+          "correct": true,
+          "abstained": false,
+          "rounds": 5,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 96.16997575759888,
+          "raw_answer": "B",
+          "ground_truth": "B"
+        }
+      ]
+    },
+    "wall_s": 539.0430905818939
+  }
+}

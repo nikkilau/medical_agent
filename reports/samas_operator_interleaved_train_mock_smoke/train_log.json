@@ -1,0 +1,57 @@
+[
+  {
+    "case_id": "medqa_sample_0",
+    "operators": [
+      "SPECIALIST",
+      "SPECIALIST",
+      "MODERATOR",
+      "MODERATOR",
+      "MODERATOR",
+      "STOP"
+    ],
+    "predicted": null,
+    "ground_truth": "A",
+    "correct": false,
+    "abstained": false,
+    "rounds": 5,
+    "reward": -0.005,
+    "update": {
+      "loss": -0.02440287545323372,
+      "reward": -0.005,
+      "baseline": -0.005,
+      "advantage": -0.005
+    },
+    "profile": {
+      "complexity": "HIGH",
+      "risk": "MODERATE",
+      "task_type": "TRIAGE"
+    },
+    "epoch": 1
+  },
+  {
+    "case_id": "medqa_sample_1",
+    "operators": [
+      "DIRECT",
+      "SAFETY",
+      "STOP"
+    ],
+    "predicted": null,
+    "ground_truth": "B",
+    "correct": false,
+    "abstained": false,
+    "rounds": 3,
+    "reward": -0.003,
+    "update": {
+      "loss": 0.007307097315788269,
+      "reward": -0.003,
+      "baseline": -0.0048000000000000004,
+      "advantage": 0.002
+    },
+    "profile": {
+      "complexity": "HIGH",
+      "risk": "MODERATE",
+      "task_type": "TRIAGE"
+    },
+    "epoch": 1
+  }
+]

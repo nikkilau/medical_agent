@@ -1,0 +1,82 @@
+{
+  "config": {
+    "n_medqa": 5,
+    "seed": 42,
+    "split": "test",
+    "output_dir": "reports/samas_medqa_pilot",
+    "use_mock": true,
+    "base_url": "http://202.120.24.199:13000/v1",
+    "model": "qwen2.5:14b",
+    "api_key_env": "GPUSTACK_API_KEY",
+    "enable_review": false
+  },
+  "started": 1781062864.7571878,
+  "elapsed_s": 0.0008959770202636719,
+  "workflow": "SAMAS_ZS_MedQA_Pilot",
+  "medqa": {
+    "n": 5,
+    "accuracy": 0.0,
+    "abstain_rate": 0.0,
+    "correct_on_answered": 0.0,
+    "avg_rounds": 1.8,
+    "avg_elapsed_s": 5.6171417236328124e-05,
+    "score_g": 0.0,
+    "raw": [
+      {
+        "case_id": "medqa_sample_0",
+        "correct": false,
+        "abstained": false,
+        "rounds": 2,
+        "difficulty": "HIGH",
+        "expected_difficulty": "None",
+        "elapsed_s": 0.0001316070556640625,
+        "raw_answer": null,
+        "ground_truth": "A"
+      },
+      {
+        "case_id": "medqa_sample_1",
+        "correct": false,
+        "abstained": false,
+        "rounds": 2,
+        "difficulty": "HIGH",
+        "expected_difficulty": "None",
+        "elapsed_s": 5.316734313964844e-05,
+        "raw_answer": null,
+        "ground_truth": "B"
+      },
+      {
+        "case_id": "medqa_sample_2",
+        "correct": false,
+        "abstained": false,
+        "rounds": 1,
+        "difficulty": "LOW",
+        "expected_difficulty": "None",
+        "elapsed_s": 4.1484832763671875e-05,
+        "raw_answer": null,
+        "ground_truth": "B"
+      },
+      {
+        "case_id": "medqa_sample_3",
+        "correct": false,
+        "abstained": false,
+        "rounds": 2,
+        "difficulty": "MEDIUM",
+        "expected_difficulty": "None",
+        "elapsed_s": 2.7179718017578125e-05,
+        "raw_answer": null,
+        "ground_truth": "B"
+      },
+      {
+        "case_id": "medqa_sample_4",
+        "correct": false,
+        "abstained": false,
+        "rounds": 2,
+        "difficulty": "HIGH",
+        "expected_difficulty": "None",
+        "elapsed_s": 2.7418136596679688e-05,
+        "raw_answer": null,
+        "ground_truth": "B"
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "path_accuracy.png": {
+    "title": "Accuracy Path",
+    "profile": {
+      "difficulty": "SIMPLE",
+      "safety_risk": "LOW",
+      "rationale": "heuristic safety=LOW, complex_score=0"
+    },
+    "route": {
+      "name": "ACCURACY",
+      "reason": "low safety risk + simple"
+    },
+    "status": "ttc_accuracy_completed"
+  },
+  "path_dynamic_mdt.png": {
+    "title": "Dynamic MDT",
+    "profile": {
+      "difficulty": "COMPLEX",
+      "safety_risk": "LOW",
+      "rationale": "heuristic safety=LOW, complex_score=2"
+    },
+    "route": {
+      "name": "DYNAMIC_MDT",
+      "reason": "low safety risk + complex"
+    },
+    "status": "ttc_dynamic_mdt_completed"
+  },
+  "path_safety_low.png": {
+    "title": "Safety Review Low",
+    "profile": {
+      "difficulty": "SIMPLE",
+      "safety_risk": "HIGH",
+      "rationale": "heuristic safety=HIGH, complex_score=0"
+    },
+    "route": {
+      "name": "SAFETY_REVIEW_LOW",
+      "reason": "high safety risk + simple"
+    },
+    "status": "ttc_safety_abstained"
+  },
+  "path_safety_high.png": {
+    "title": "Safety Review High",
+    "profile": {
+      "difficulty": "COMPLEX",
+      "safety_risk": "HIGH",
+      "rationale": "heuristic safety=HIGH, complex_score=1"
+    },
+    "route": {
+      "name": "SAFETY_REVIEW_HIGH",
+      "reason": "high safety risk + complex"
+    },
+    "status": "ttc_safety_abstained"
+  }
+}

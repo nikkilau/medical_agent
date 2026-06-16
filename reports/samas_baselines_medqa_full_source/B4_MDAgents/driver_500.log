@@ -1,0 +1,23 @@
+[data] loading MedQA split=test n=500 seed=42
+Using the latest cached version of the dataset since GBaker/MedQA-USMLE-4-options couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at data/medqa/GBaker___med_qa-usmle-4-options/default/0.0.0/0fb93dd23a7339b6dcd27e241cb9b5eca62d4d18 (last modified on Sat Jun  6 10:45:44 2026).
+[data] got 500 cases
+[provider] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=qwen2.5:14b
+[LLM Provider] model=qwen2.5:14b, endpoint=http://202.120.24.199:13000/v1/chat/completions
+[B4_MDAgents] completed=2 remaining=498 out=reports/samas_baselines_medqa_full_source/B4_MDAgents/results.json
+[B4_MDAgents] 3/500 (+1/498) OK pred=D gt=D t=22.1s
+[B4_MDAgents] 4/500 (+2/498) MISS pred=A gt=C t=18.7s
+[B4_MDAgents] 5/500 (+3/498) OK pred=A gt=A t=35.1s
+[B4_MDAgents] 6/500 (+4/498) OK pred=D gt=D t=39.8s
+[B4_MDAgents] 7/500 (+5/498) MISS pred=A gt=B t=26.3s
+[B4_MDAgents] 8/500 (+6/498) MISS pred=A gt=B t=39.8s
+[B4_MDAgents] 9/500 (+7/498) OK pred=A gt=A t=23.3s
+[B4_MDAgents] 10/500 (+8/498) OK pred=B gt=B t=21.1s
+[B4_MDAgents] 11/500 (+9/498) OK pred=A gt=A t=37.4s
+[B4_MDAgents] 12/500 (+10/498) MISS pred=A gt=B t=33.5s
+[B4_MDAgents] 13/500 (+11/498) MISS pred=A gt=B t=38.7s
+[B4_MDAgents] 14/500 (+12/498) OK pred=B gt=B t=37.3s
+[B4_MDAgents] 15/500 (+13/498) MISS pred=C gt=D t=44.9s
+[B4_MDAgents] 16/500 (+14/498) OK pred=B gt=B t=34.0s
+[B4_MDAgents] 17/500 (+15/498) MISS pred=B gt=A t=42.9s
+[B4_MDAgents] 18/500 (+16/498) OK pred=C gt=C t=27.6s

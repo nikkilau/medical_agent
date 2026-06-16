@@ -59,4 +59,4 @@ class MDTResult:
     human_decision: str | None = None
     documents: dict[str, str] = field(default_factory=dict)
     trace: list[AgentResponse] = field(default_factory=list)
-
+    metadata: dict[str, Any] = field(default_factory=dict)

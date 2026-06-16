@@ -1,0 +1,18 @@
+[data] loading MedQA split=test n=full seed=42
+Using the latest cached version of the dataset since GBaker/MedQA-USMLE-4-options couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at data/medqa/GBaker___med_qa-usmle-4-options/default/0.0.0/0fb93dd23a7339b6dcd27e241cb9b5eca62d4d18 (last modified on Sat Jun  6 10:45:44 2026).
+[data] got 1273 cases
+[provider] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=qwen2.5:14b
+[LLM Provider] model=qwen2.5:14b, endpoint=http://202.120.24.199:13000/v1/chat/completions
+[B0_RawIO] completed=0 remaining=1273 out=reports/samas_baselines_medqa_full_source/B0_RawIO/results.json
+[B0_RawIO] 1/1273 (+1/1273) MISS pred=A gt=B t=22.4s
+[B0_RawIO] 2/1273 (+2/1273) MISS pred=A gt=D t=38.1s
+[B0_RawIO] 3/1273 (+3/1273) OK pred=B gt=B t=27.4s
+[B0_RawIO] 4/1273 (+4/1273) OK pred=D gt=D t=52.4s
+[B0_RawIO] 5/1273 (+5/1273) OK pred=B gt=B t=32.7s
+[B0_RawIO] 6/1273 (+6/1273) OK pred=D gt=D t=30.2s
+[B0_RawIO] 7/1273 (+7/1273) MISS pred=B gt=C t=19.9s
+[B0_RawIO] 8/1273 (+8/1273) OK pred=C gt=C t=23.1s
+[B0_RawIO] 9/1273 (+9/1273) OK pred=B gt=B t=25.4s
+[B0_RawIO] 10/1273 (+10/1273) OK pred=A gt=A t=34.4s
+[B0_RawIO] 11/1273 (+11/1273) MISS pred=A gt=D t=13.9s

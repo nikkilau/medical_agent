@@ -209,4 +209,3 @@ class MicroMDT:
     @staticmethod
     def _with_disclaimer(text: str) -> str:
         return f"{DISCLAIMER}\n\n{text}"
-

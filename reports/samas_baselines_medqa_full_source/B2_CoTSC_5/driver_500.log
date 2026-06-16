@@ -1,0 +1,12 @@
+[data] loading MedQA split=test n=500 seed=42
+Using the latest cached version of the dataset since GBaker/MedQA-USMLE-4-options couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at data/medqa/GBaker___med_qa-usmle-4-options/default/0.0.0/0fb93dd23a7339b6dcd27e241cb9b5eca62d4d18 (last modified on Sat Jun  6 10:45:44 2026).
+[data] got 500 cases
+[provider] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=qwen2.5:14b
+[LLM Provider] model=qwen2.5:14b, endpoint=http://202.120.24.199:13000/v1/chat/completions
+[B2_CoTSC_5] completed=0 remaining=500 out=reports/samas_baselines_medqa_full_source/B2_CoTSC_5/results.json
+[B2_CoTSC_5] 1/500 (+1/500) OK pred=D gt=D t=108.7s
+[B2_CoTSC_5] 2/500 (+2/500) MISS pred=B gt=C t=83.9s
+[B2_CoTSC_5] 3/500 (+3/500) OK pred=A gt=A t=118.3s
+[B2_CoTSC_5] 4/500 (+4/500) OK pred=D gt=D t=132.0s
+[B2_CoTSC_5] 5/500 (+5/500) OK pred=B gt=B t=96.2s

@@ -66,4 +66,3 @@ def render_summary(results: list[MDTResult]) -> str:
             f"{result.status} | {'yes' if result.human_required else 'no'} |"
         )
     return "\n".join(rows)
-

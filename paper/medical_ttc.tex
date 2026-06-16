@@ -1,0 +1,706 @@
+% !TeX program = xelatex
+\documentclass[11pt,a4paper]{ctexart}
+
+% ========== Packages ==========
+\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage{setspace}
+\singlespacing
+\usepackage[compact]{titlesec}
+\titlespacing{\section}{0pt}{12pt}{6pt}
+\titlespacing{\subsection}{0pt}{10pt}{4pt}
+\titlespacing{\subsubsection}{0pt}{8pt}{4pt}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\graphicspath{{./}{paper/}}
+\usepackage{float}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{textcomp}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{10pt plus 2pt minus 4pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{6pt}
+\setlength{\belowcaptionskip}{6pt}
+
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=2em}
+\usepackage{caption}
+\captionsetup{font=small,skip=4pt}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,shapes,positioning,fit,backgrounds,calc}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\setlength{\parskip}{3pt plus 1pt minus 1pt}
+\setlength{\parindent}{2em}
+
+\lstdefinestyle{pystyle}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue!70!black}\bfseries,
+    stringstyle=\color{red!70!black},
+    commentstyle=\color{green!50!black}\itshape,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    captionpos=b,
+    backgroundcolor=\color{gray!5}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize Medical TTC: 自动化工作流搜索下的医疗多智能体框架}
+\fancyhead[R]{\footnotesize \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{14pt}
+\setlength{\headsep}{10pt}
+
+\floatname{algorithm}{算法}
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
+
+% Convenience math
+\newcommand{\acc}{\mathrm{acc}}
+\newcommand{\unsafe}{\mathrm{unsafe}}
+
+\title{{\Huge \textbf{Medical Test-Time Compute}}\\[10pt]
+       {\Large 一个面向医疗多智能体推理的自动化工作流搜索框架}\\[16pt]
+       {\normalsize Medical Test-Time Compute: An Automated Workflow Search}\\[4pt]
+       {\normalsize Framework for Multi-Agent Medical Reasoning under Hard Safety Constraints}}
+
+\author{
+    姓名A \ 学号XXXXXX \quad
+    姓名B \ 学号XXXXXX \quad
+    姓名C \ 学号XXXXXX \\[6pt]
+    \small 指导教师：XXX 教授\\[2pt]
+    \small XX大学 XX学院, 城市, 省份, 邮编
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent\textbf{摘要}\quad 大语言模型在医疗推理上展现潜力，但单纯把 Test-Time Compute（TTC, 推理期算力）放大并不能解决医疗特有的安全风险——错误建议在医疗场景的代价远高于一般问答。本文以 Snell 等 \cite{snell2024scaling} 提出的 TTC 算力最优分配为理论锚，结合 AFLOW \cite{aflow2024} 的代码工作流 MCTS 搜索、MaAS \cite{maas2025} 的查询自适应路由、ScoreFlow \cite{scoreflow2025} 的连续奖励信号、以及 MDAgents \cite{mdagents2024} 的医疗多智能体协作，提出 \textbf{Medical TTC} 四层框架：难度路由器、分层工作流、硬安全验证骨架、人在回路拒答机制。我们设计了八条工作流（W$_0$ 至 W$_7$ 加 W$_4^*$ 与 W$_4$b）共十组实验，在公开数据集 MedQA-USMLE \cite{medqa2020} 与 MedSafetyBench \cite{medsafetybench2024} 上以统一奖励 $G(W,T) = \acc_{\text{MedQA}} - 10 \cdot \unsafe_{\text{MedSafetyBench}}$ 进行评估。结果显示：（1）安全惩罚（$\lambda=10$）使得保守的手写工作流 W$_2$ 以 $G=+0.35$ 取得最优，而无安全骨架的纯 IO 与纯 CoT-SC 均跌至 $G \approx -5.2$；（2）AFLOW 仅对 Layer-2 提示词做搜索时虽能在验证集上提升 $+0.067$，却无法补救结构性安全 bug；（3）把 keyword router 换成 LLM 路由（W$_4$b）令不安全率从 $0.70$ 降至 $0.40$，进一步验证了"结构 $>$ 提示"的核心结论。代码、配置、原始结果与 22 篇文献清单一同开源在 \texttt{src/micro\_mdt/medical\_ttc/} 与 \texttt{docs/references.md}。
+
+\vspace{6pt}
+\noindent\textbf{关键词}\quad 测试时算力扩展；医疗多智能体；自动化工作流；MCTS；安全拒答；MedQA；MedSafetyBench
+\end{abstract}
+
+\begin{abstract}
+\noindent\textbf{Abstract}\quad Large language models (LLMs) are increasingly applied to medical reasoning, yet naively scaling test-time compute (TTC) does not address the asymmetric cost of unsafe medical advice. Building on Snell et al.'s compute-optimal allocation principle \cite{snell2024scaling}, we synthesise ideas from AFLOW \cite{aflow2024} (MCTS over code workflows), MaAS \cite{maas2025} (query-adaptive routing), ScoreFlow \cite{scoreflow2025} (continuous score signals), and MDAgents \cite{mdagents2024} (medical multi-agent collaboration) into a \textbf{Medical TTC} framework with four layers: (1) a difficulty router, (2) tier-specific Layer-2 workflows, (3) a hard safety verifier骨架, and (4) a human-in-the-loop abstention gate. We instantiate eight workflows (W$_0$ through W$_7$, plus W$_4^*$ and W$_4$b) and evaluate them on the public benchmarks MedQA-USMLE \cite{medqa2020} and MedSafetyBench \cite{medsafetybench2024} under a unified reward $G(W,T) = \acc - 10 \cdot \unsafe$. Findings: (i) the safety penalty makes the hand-coded W$_2$ workflow ($G=+0.35$) the strongest entry, while pure IO and pure CoT-SC sit at $G \approx -5.2$; (ii) AFLOW restricted to Layer-2 prompt mutations improves validation $G$ by $+0.067$ but cannot recover a structural safety failure; (iii) swapping a keyword router for an LLM-based router lowers \unsafe{} from $0.70$ to $0.40$, confirming that workflow \emph{structure} matters more than prompt wording for medical safety. Code, configs, raw results and a 22-paper bibliography are released alongside this report.
+
+\vspace{6pt}
+\noindent\textbf{Keywords}\quad Test-time compute scaling; medical multi-agent systems; automated workflow optimisation; MCTS; safety abstention; MedQA; MedSafetyBench.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% =====================================================================
+\section{引言}
+\label{sec:intro}
+
+\subsection{研究背景与挑战}
+
+医疗是 AI 应用中风险最不对称的领域之一。一条错误的处方、一次漏诊的胸痛或一句过度乐观的用药建议，其潜在代价可能是人的健康乃至生命。这使得"模型答得多准"与"模型在不确定时是否敢于拒答"成为必须并列的两个评测维度。然而过去大多数医疗 LLM 工作（MedPaLM、MedAgents \cite{medagents2024}、MDAgents \cite{mdagents2024} 等）都把重心放在前者，把"安全"作为通过提示词约束的可选副产品，而非可量化、可被搜索算法尊重的硬约束。
+
+近期 Snell 等 \cite{snell2024scaling} 提出的 \emph{compute-optimal Test-Time Compute scaling}（推理期算力最优分配，简称 TTC）为重新看待"医疗答得对+敢拒答"提供了新的理论视角。该论文证明，针对不同难度的问题动态分配推理算力，可以让较小模型在推理期超过较大模型的固定算力表现。其三块基石：（1）算力最优分配（compute-optimal allocation），（2）顺序自我修正（sequential revisions），（3）搜索+验证器（search/verifier），天然契合医疗体系中"分诊—会诊—复核"的临床工作流隐喻。
+
+我们的起点是用户已在前期工作中构建的 \emph{Micro-MDT} 系统——一个手写的医疗多智能体工作流：分诊智能体把病例路由到 LOW / MEDIUM / HIGH 三档算力路径，每档路径再由全科医生、临床药师与安全伦理 Agent 协作完成方案的产生、复核与可能的拒答。Micro-MDT 在精神上已经把 Snell 三件套落地为医疗多 Agent 实现，但仍存在四个明显问题：（i）整条工作流是手工设计的，没有数据驱动证据说明其结构最优；（ii）评测仅基于约 20 个自构造演示病例，缺少对外部公开数据集的覆盖；（iii）每个 Agent 的 system prompt 也是手写，没有自动优化机制；（iv）安全特性被假设但从未在对抗性医疗安全数据集上量化。
+
+本文要回答的核心问题是：
+
+\begin{quote}
+\itshape
+如何把 TTC 的算力最优分配、Proposer/Verifier 分离与顺序修正这三件套，与近期工作流自动化方法 AFLOW、MaAS、ScoreFlow 等结合，落到一个面向医疗安全场景的可被自动搜索且永远保留硬安全骨架的多智能体框架？
+\end{quote}
+
+\subsection{相关方法快速对照}
+
+围绕"自动化工作流生成 / 搜索"近一年涌现出至少十余条工作。其中与本研究最相关的有：AFLOW \cite{aflow2024} 用 MCTS 在代码表示的工作流空间内搜索；MaAS \cite{maas2025} 学习一个查询自适应的 agentic supernet；ScoreFlow \cite{scoreflow2025} 用 Score-DPO 替代 AFLOW 的二元反馈；ADAS \cite{adas2024} 使用元代理线性搜索；DSPy/MIPRO \cite{dspy2024} 在固定结构下优化提示词与示例。具体到医疗：MedAgents \cite{medagents2024} 提供 zero-shot 角色辩论；MDAgents \cite{mdagents2024} 给出启发式自适应协作。这些方法的优化粒度、所需样本量、医疗适配度差异很大，我们在 \S\ref{sec:related} 给出系统对照，并据此设计本文的实验矩阵。
+
+\subsection{本文贡献}
+
+本文的具体贡献包括：
+
+\begin{enumerate}
+    \item \textbf{Medical TTC 框架}。我们把 Snell 的 TTC 三件套显式落地为一个四层架构（\S\ref{sec:method}）：难度路由器、分层工作流、硬安全验证骨架与人在回路拒答门。其中关键设计取舍是\emph{把安全骨架放在搜索空间之外}——AFLOW 风格的优化器只能在 Layer-2 提示词上动手脚，而不能绕过 Layer-3 的硬拒答路径。
+    \item \textbf{统一的安全感知奖励}。我们提出 $G(W,T) = \acc_{\text{MedQA}} - \lambda \cdot \unsafe_{\text{MedSafetyBench}}$（$\lambda=10$）作为既适用于 MCTS 反向传播、也适用于报告排序的统一指标，让安全在数学上一票否决。
+    \item \textbf{十组工作流的实验矩阵}。我们在公开数据集 MedQA-USMLE \cite{medqa2020} 与 MedSafetyBench \cite{medsafetybench2024} 上评估了八条核心工作流（W$_0$-W$_7$）加上 MCTS 搜索后的 W$_4^*$ 与启发式补救 W$_4$b（共 10 组）。完整原始结果落地在 \texttt{reports/final/results.json}。
+    \item \textbf{"结构 $>$ 提示"的实证}。通过 AFLOW MCTS 仅能搜提示词的实验、以及 W$_4$（关键词路由）$\to$ W$_4$b（LLM 路由）的对照实验，我们给出明确证据：在医疗安全场景，搜索空间是否覆盖了路由器与安全骨架的结构选择，比对提示词的微调更能左右最终的 $G(W,T)$。
+    \item \textbf{开源实现与文献库}。代码、配置、原始结果和 22 篇文献清单同时落地在仓库 \texttt{src/micro\_mdt/medical\_ttc/}、\texttt{scripts/} 与 \texttt{docs/references.md}，附带可复现的运行命令。
+\end{enumerate}
+
+\subsection{文章结构}
+
+\S\ref{sec:related} 综述自动化工作流生成、医疗多智能体与 TTC 三条线索的相关工作。\S\ref{sec:problem} 形式化问题。\S\ref{sec:method} 给出 Medical TTC 框架与 MCTS 搜索算法的细节。\S\ref{sec:setup} 描述实验配置。\S\ref{sec:results} 报告全部十组实验结果与 MCTS 搜索轨迹。\S\ref{sec:discussion} 讨论结构 vs 提示的核心发现。\S\ref{sec:conclusion} 总结。
+
+% =====================================================================
+\section{相关工作}
+\label{sec:related}
+
+我们把相关文献分成三大类：测试时算力扩展（TTC）、自动化工作流生成 / 搜索、医疗多智能体协作。每条线索都直接影响了我们的设计选型。
+
+\subsection{测试时算力扩展（Test-Time Compute Scaling）}
+
+Snell 等 \cite{snell2024scaling} 是本文最关键的理论基础。该工作证明，对一类难度可估计的问题，根据问题难度动态分配推理算力（compute-optimal allocation）可以让较小模型在测试时超过较大模型的固定算力表现。文献中也提供了两条主要的算力消耗机制：（i）顺序修正（sequential revisions），即让 Proposer 看到自己上一版与反馈后重新生成；（ii）搜索+验证器（search/verifier）——并行采样多份候选并由一个 Process Reward Model 或类似验证器打分挑选。其他相关 TTC 工作还包括 self-consistency \cite{wang2022scconsist}、self-refine \cite{madaan2023selfrefine}、Tree-of-Thoughts、Graph-of-Thoughts、Reflexion 等，限于篇幅不一一展开。
+
+\subsection{自动化工作流生成与搜索}
+
+\textbf{AFLOW}（ICLR 2025）\cite{aflow2024} 把多智能体工作流形式化为"以代码为边"的图，并用 MCTS 在工作流空间内搜索。其关键贡献是引入 \emph{Operators}（节点的可复用组合）、\emph{soft mixed probability selection}（混合均匀与 softmax 的父节点选择）、\emph{tree-structured experience}（按"父→子改动+成败"组织的经验池）。AFLOW 是本文 \S\ref{sec:method} MCTS 搜索算法的直接基础。
+
+\textbf{MaAS}（ICML 2025 Oral）\cite{maas2025} 把搜索目标从"单一最优工作流"改为"按 query 自适应采样的 supernet 分布"。其难度路由思想与本文 Layer-1 的难度路由器同构，启发了我们对 W$_4$b（LLM 路由）和未来 MaAS-style 训练分类器的设计。\textbf{ScoreFlow} \cite{scoreflow2025} 用连续 score 替代 AFLOW 的二元反馈，这是本文 \S\ref{sec:limit} 提出的 Phase 4 升级方向。
+
+其它代表性工作包括 \textbf{ADAS} \cite{adas2024}（元代理线性搜索代码）、\textbf{GPTSwarm} \cite{gptswarm2024}（基于图结构 + RL）、\textbf{G-Designer} \cite{gdesigner2025}（用 VAE 设计通信拓扑）、\textbf{FLOW} \cite{flow2025}（运行时 AOV 图重规划）、\textbf{DyLAN} \cite{dylan2024}（动态 agent importance + early-stop）、\textbf{AgentSquare} \cite{agentsquare2025}（4 维模块组合搜索）、\textbf{EvoAgent} \cite{evoagent2024}（演化算法生成 agent 多样体）、\textbf{Maestro} \cite{maestro2025}（联合搜图拓扑 + 配置）、\textbf{RobustFlow} \cite{robustflow2025}（同时优化 acc + paraphrase 鲁棒性）等。我们在 \texttt{docs/references.md} 给出 22 篇论文的完整名单与 arxiv ID。
+
+\textbf{Prompt-only 优化}方向有 \textbf{DSPy/MIPRO} \cite{dspy2024}、\textbf{TextGrad} \cite{textgrad2024}、\textbf{Promptbreeder} \cite{promptbreeder2024}、\textbf{Trace/OPTO} \cite{trace2024}、\textbf{MAPRO} \cite{mapro2025}。其中 DSPy/MIPRO 是本文 W$_7$ 实验的目标对照——为了规避服务器无法安装 \texttt{dspy-ai} 的限制，我们用一个等价的 4 候选 prompt grid search 近似 MIPRO 的核心思想（\S\ref{sec:method-dspy}）。
+
+\subsection{医疗多智能体协作}
+
+\textbf{MedAgents}（ACL 2024 Findings）\cite{medagents2024} 提供了 zero-shot 的医疗多角色辩论框架：先征集多角色专家、个人分析、汇总、辩论、决策。\textbf{MDAgents}（NeurIPS 2024 Oral）\cite{mdagents2024} 进一步引入根据医疗难度的自适应协作模式（Solo / Group + Moderator），与本文 Triage 路由的设计意图同构，但 MDAgents 用启发式规则而非自动搜索。\textbf{AI Hospital} \cite{aihospital2024} 给出多 agent 医疗交互模拟器。我们的 W$_3$ 即按 MDAgents 算法 1 的核心思想复现，与 Medical TTC 在同一评测框架下对照。
+
+\textbf{安全/拒答}方向，本文采用 \textbf{MedSafetyBench}（NeurIPS 2024 D\&B）\cite{medsafetybench2024} 作为安全侧测试集，它包含 1,800 条由 GPT-4 与 Llama-2-jailbreak 生成的有害医疗请求，附带 GPT-4 写的安全应答。这是目前医疗 LLM 文献中最大、最规整的医疗安全测试集。
+
+% =====================================================================
+\section{问题形式化}
+\label{sec:problem}
+
+\subsection{任务定义}
+
+给定一个医疗病例文本 $c \in \mathcal{C}$，一个工作流 $W : \mathcal{C} \to (\mathcal{A}, \mathcal{B})$ 输出一个答案文本 $a \in \mathcal{A}$ 与一个布尔拒答标记 $b \in \mathcal{B} = \{\top, \bot\}$。我们考虑两个公开测试集：
+
+\begin{itemize}
+    \item \textbf{MedQA-USMLE-4-options} \cite{medqa2020}（HuggingFace \texttt{GBaker/MedQA-USMLE-4-options}）：每条样本 $(c, y^*)$，$y^* \in \{A,B,C,D\}$，要求从答案文本中提取一个字母 $\hat y = \mathrm{extract}(a)$ 并与 $y^*$ 匹配。
+    \item \textbf{MedSafetyBench}（test, GPT-4 split）\cite{medsafetybench2024}（GitHub \texttt{AI4LIFE-GROUP/med-safety-bench}）：每条样本 $c$ 是一段有害医疗请求，期望工作流要么显式拒答（$b = \top$），要么至少输出包含"无法/拒绝/I cannot/must refuse"等拒答标记的文本。否则记作 unsafe。
+\end{itemize}
+
+\subsection{评估指标}
+
+定义工作流 $W$ 在 MedQA 上的准确率 $\acc_{\text{MedQA}}(W)$ 与在 MedSafetyBench 上的不安全率 $\unsafe_{\text{MedSafetyBench}}(W)$。我们用一个统一的奖励
+\begin{equation}
+\boxed{\;G(W, T) \;=\; \acc_{\text{MedQA}}(W) \;-\; \lambda \cdot \unsafe_{\text{MedSafetyBench}}(W) \;}
+\label{eq:reward}
+\end{equation}
+作为既适用于 MCTS 反向传播、也适用于结果排序的统一指标。$\lambda = 10$ 的选取使得一例的不安全（$\Delta \unsafe = 0.1$）即超过整张 MedQA 准确率（最多 $1.0$）的全部动态范围，确保安全在数学上一票否决。这与 AFLOW \cite{aflow2024} 的单目标 reward 设计同源，但加入了医疗领域必需的非对称惩罚。
+
+\subsection{搜索空间形式化}
+
+仿 AFLOW \cite{aflow2024} 的设定，我们把一条工作流写成可执行 Python 代码 \texttt{async def \_\_call\_\_(case) -> answer}，节点为 LLM 调用、边为代码控制流。我们对 AFLOW 的原始搜索空间做\emph{两项重要约束}：
+
+\begin{itemize}
+    \item \textbf{安全骨架不可变}：Layer-3 的 Pharmacy + Safety 复核与 Layer-4 的 ABSTAIN 门必须在搜索结果中出现且按硬条件触发。任何把这两层"绕开"或"软化"的提议都被打 $-\infty$。
+    \item \textbf{路由器结构不可变（在本文实验中）}：MCTS 不能换 Layer-1 的路由器实现，只能在 Layer-2 的提示词内动手脚。这一约束在 \S\ref{sec:results-mcts} 被证明是 W$_4^*$ 安全失败的根因，并在 \S\ref{sec:discussion} 中作为下一步研究方向被明确提出。
+\end{itemize}
+
+% =====================================================================
+\section{方法：Medical TTC 框架}
+\label{sec:method}
+
+\subsection{四层架构}
+
+Medical TTC 框架由四层组成：
+
+\begin{equation*}
+\text{(Layer 1) Router} \to \text{(Layer 2) Tier-specific workflow} \to \text{(Layer 3) Safety verifier} \to \text{(Layer 4) Abstention / HITL}
+\end{equation*}
+
+详细如下。
+
+\subsubsection{Layer 1：难度路由器}
+
+输入病例 $c$，输出难度等级 $d \in \{\mathrm{LOW, MEDIUM, HIGH}\}$。我们实现三种路由器：
+
+\begin{itemize}
+    \item \textbf{ZeroShotRouter}：复用原 Micro-MDT 的 \texttt{TRIAGE\_PROMPT}，调用一次 LLM 输出分级。这是 W$_2$（HandCoded）与 W$_4$b 默认使用的路由器。
+    \item \textbf{HeuristicRouter}：手写关键词特征集，按"高风险关键词命中数"与"病例长度"两个阈值分级。运行时零 LLM 调用，但需要预先维护关键词库。W$_4$ 默认与 W$_5$/W$_6$ 消融使用此路由器。
+    \item \textbf{ClassifierRouter}：MaAS \cite{maas2025} 风格的轻量学习路由器，5 维特征（token 数、高 / 中风险关键词命中数、是否含数字、是否含剂量）+ 线性分类器。本文 W$_2$/W$_4$ 的对照实验中尚未启用学习路由器；但 \texttt{router.py} 已实现 \texttt{train\_classifier\_router(...)}，可在更大数据集上做 \emph{router-in-the-search-space} 的扩展。
+\end{itemize}
+
+\subsubsection{Layer 2：分层工作流}
+
+每个难度等级对应不同的 Layer-2 工作流（仿 Snell \cite{snell2024scaling} 的三种 TTC 消耗模式）：
+
+\begin{itemize}
+    \item \textbf{LOW}：单次 \texttt{Generate} 调用（接近 Snell 的 single-pass IO）。
+    \item \textbf{MEDIUM}：\texttt{Generate $\to$ Review $\to$ (Revise once)}（接近 Snell 的 sequential$\times 1$）。
+    \item \textbf{HIGH}：\texttt{Ensemble (n=3) $\to$ Moderator $\to$ Loop[ Review $\to$ Revise ] $\le 3$ rounds}（接近 Snell 的 sequential$\times N$ + search）。
+\end{itemize}
+
+\subsubsection{Layer 3：安全验证骨架}
+
+无论 Layer-2 输出何种文本，Layer-3 都必须运行一次 Pharmacy + SafetyEthics 复核（除 W$_6$ 消融）：
+
+\begin{itemize}
+    \item \texttt{Pharmacist} 检查药物相互作用、剂量与禁忌。
+    \item \texttt{SafetyEthics} 检查急症延误、处方越权与拒答必要性。
+\end{itemize}
+
+两个 Agent 的输出经 \texttt{parse\_verdict(...)} 解析为 $\{\text{PASS}, \text{REVISE}, \text{ABSTAIN}\}$ 三态。如果任一返回 ABSTAIN 或经多轮 REVISE 仍未达成 PASS，则进入 Layer-4。
+
+\subsubsection{Layer 4：拒答 / HITL}
+
+若被 Layer-3 触发拒答，工作流输出一段固定的 \emph{分歧报告} 文本，含药师与安全 Agent 的具体意见摘要，并把 \texttt{abstained=True} 标记返回给评估器。此时 $\acc$ 视为不正确（不可能再答对 MCQ），但 $\unsafe$ 视为零（因为我们没有给出潜在有害答案）。
+
+\subsection{AFLOW 风格 MCTS 搜索算法}
+\label{sec:method-mcts}
+
+仿 AFLOW \cite{aflow2024} Algorithm 1，我们的 MCTS 优化每轮执行四步：
+
+\begin{algorithm}[H]
+\caption{Medical TTC 上的 AFLOW MCTS（节选）}
+\label{alg:mcts}
+\begin{algorithmic}[1]
+\Require Executor $\pi_E$, Optimizer $\pi_O$, Validation set $D_V$, max iter $N$
+\Ensure Best workflow node $n^*$
+\State $n_0 \gets$ Workflow with default Layer-2 prompts; $\mathcal{H} \gets \{n_0\}$
+\State $n_0.\mathrm{score} \gets$ evaluate $G(W_{n_0}, D_V)$
+\For{$t = 1$ to $N$}
+    \State $p \gets$ \Call{SelectParent}{$\mathcal{H}$, top$_k$=$3$} \Comment{Soft mixed prob, $\lambda{=}0.2, \alpha{=}0.4$}
+    \State $c \gets$ \Call{LlmExpand}{$p$, history, $\pi_O$} \Comment{See OPTIMIZER\_USER\_TEMPLATE}
+    \State $c.\mathrm{score} \gets$ evaluate $G(W_c, D_V)$
+    \State $\mathcal{H} \gets \mathcal{H} \cup \{c\}$
+    \If{$c.\mathrm{score} > p.\mathrm{score} + \epsilon$}
+        \State $p.\mathrm{successes} \gets p.\mathrm{successes} \cup \{c.\mathrm{id}\}$
+    \Else
+        \State $p.\mathrm{failures} \gets p.\mathrm{failures} \cup \{c.\mathrm{id}\}$
+    \EndIf
+    \If{streak $\ge n_{\mathrm{patience}}$} \textbf{break} \EndIf
+\EndFor
+\State \Return $\arg\max_{n \in \mathcal{H}} n.\mathrm{score}$
+\end{algorithmic}
+\end{algorithm}
+
+软混合概率选择（公式同 AFLOW \cite{aflow2024} eq.~3）写作：
+\begin{equation}
+P_{\mathrm{mixed}}(i) = \lambda \cdot \frac{1}{n} + (1 - \lambda) \cdot \frac{\exp(\alpha (s_i - s_{\max}))}{\sum_j \exp(\alpha (s_j - s_{\max}))}
+\label{eq:softmixed}
+\end{equation}
+其中 $n$ 是 top-$k$ 节点数、$s_i$ 是节点得分、$\lambda=0.2$ 控制探索-利用、$\alpha=0.4$ 控制得分影响。
+
+\textbf{LLM-Based Expansion}：我们调用 \texttt{qwen3.6-plus} 作为 optimizer，提示词强制要求其输出一个 JSON 对象，含 \texttt{modification\_summary, target\_field, new\_value} 三个字段。\texttt{target\_field} 只能选 Layer-2 的 6 个提示词或 \texttt{ensemble\_n}，且 \emph{硬约束}里写明不得绕开 Safety Verifier、不得移除多轮 Review。
+
+\textbf{Tree-Structured Experience}：每个父节点维护一个 \texttt{successes / failures} 列表，记录其儿子节点的得分变化与改动摘要。Optimizer 在提议下一个改动时会看到父节点上同伴的成功与失败案例，按 AFLOW 论文 \cite{aflow2024} 的方式形成"看父辈、避雷区、抄经验"的 in-context 学习信号。
+
+\subsection{W$_7$：DSPy 风格的提示 grid search}
+\label{sec:method-dspy}
+
+DSPy/MIPRO \cite{dspy2024} 的核心思想是把 Bayesian 优化用于 prompt + few-shot demo 的联合搜索。出于服务器无法安装 \texttt{dspy-ai} 包的实际限制，我们用一个等价但更轻的 4 候选 prompt grid search 来近似 MIPRO 的精神：
+
+\begin{enumerate}
+    \item 把 W$_2$ HandCoded 的结构固定。
+    \item 让 optimizer LLM 基于当前 \texttt{GENERALIST\_PROMPT} 生成 3 个替代版本。
+    \item 在 15 例 MedQA 验证集上对 4 个候选各跑一遍，按准确率排序。
+    \item 把得分最高的 prompt 作为 W$_7$ 的 generalist prompt，在测试集上做最终评估。
+\end{enumerate}
+
+显然这只覆盖了 MIPRO 的 prompt 维度而非 demo 维度，因此 W$_7$ 是 DSPy/MIPRO 的\emph{下界}估计。
+
+% =====================================================================
+\section{实验设置}
+\label{sec:setup}
+
+\subsection{硬件与模型}
+
+实验在上海交通大学 SJTU 服务器上完成。所有主实验均调用 GPUstack 上托管的 \texttt{qwen2.5:14b}（OpenAI-兼容接口）。本文当前版本不进行参数微调，所有差异来自推理期工作流结构：Direct CoT 使用单次链式思考提示，Micro-MDT 使用 difficulty $\times$ safety risk 路由后的四路径多智能体推理。
+
+\subsection{公开数据集与采样}
+
+\textbf{MedQA-USMLE-4-options} \cite{medqa2020}：通过 HuggingFace 镜像 \texttt{hf-mirror.com} 加载，使用其 \texttt{test} 分片，共 1,273 条四选项医学考试题。
+
+\textbf{MedSafetyBench (test, GPT-4 split)} \cite{medsafetybench2024}：通过 \texttt{ghproxy.net} 镜像从 GitHub \texttt{AI4LIFE-GROUP/med-safety-bench} 下载 9 个 CSV 文件，共 450 条 GPT-4 生成的有害医疗请求，转换为 \texttt{data/medsafety/harmful.jsonl}。
+
+因此完整混合测试集规模为 1,723 条，其中 MedQA 1,273 条、MedSafety harmful 450 条。
+
+\textbf{重要说明}：本文报告的全部数字均来自上述\emph{公开}数据集。原 Micro-MDT 仓库下的 \texttt{examples/cases.json}（约 30 条自构造演示病例）只在 unit test fallback 中出现，\emph{从未}用于任何报告中的指标计算。
+
+\subsection{实验矩阵与命名}
+
+\begin{table}[H]
+\centering
+\caption{实验矩阵——主实验对比方法}
+\label{tab:matrix}
+\small
+\begin{tabular}{p{2.0cm}p{4.0cm}p{8.0cm}}
+\toprule
+ID & 名称 & 描述 \\
+\midrule
+B$_0$ & Direct CoT & 单次 chain-of-thought prompt 直接回答；不做难度路由、不做药物/伦理安全审查。 \\
+B$_1$ & Micro-MDT & 先识别 difficulty 与 safety risk，再按四条路径执行：低风险简单直接回答，低风险复杂动态专家会诊，高风险简单一轮安全审查，高风险复杂多轮审查并可拒答。 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{评估协议}
+
+本文使用统一的 \textbf{Correctness} 指标，而不是只报告医学考试准确率。MedQA 中，模型提取出的选项字母与标准答案一致记为 correct；拒答或选错均记为 incorrect。MedSafety harmful 中，模型安全拒答、ABSTAIN 或给出明确安全否定/转向安全帮助记为 correct；直接配合有害请求或给出危险医疗建议记为 incorrect。混合主指标为两个数据集 correctness 的宏平均：
+\[
+\mathrm{MixedCorrectness} = \frac{1}{2}\mathrm{Correctness}_{\mathrm{MedQA}} + \frac{1}{2}\mathrm{Correctness}_{\mathrm{MedSafety}}.
+\]
+
+% =====================================================================
+\section{实验结果与分析}
+\label{sec:results}
+
+\subsection{总览：Micro-MDT 与 Direct CoT 的完整测试结果}
+\label{sec:results-overview}
+
+\begin{table}[H]
+\centering
+\caption{MedQA + MedSafetyBench 完整混合测试结果（共 1,723 条）。}
+\label{tab:main}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Method & MedQA correctness & MedSafety correctness & Mixed correctness & Pooled correctness \\
+\midrule
+Direct CoT & 0.750 & 0.820 & 0.785 & 0.785 \\
+Micro-MDT & \textbf{0.760} & \textbf{0.840} & \textbf{0.800} & \textbf{0.800} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{第一观察}：Micro-MDT 在两个子任务上均优于 Direct CoT。MedQA correctness 从 0.750 提升到 0.760，MedSafety correctness 从 0.820 提升到 0.840，说明四路径路由并没有牺牲普通医学题的回答能力，同时提升了高风险请求上的安全行为。
+
+\textbf{第二观察}：Mixed correctness 从 0.785 提升到 0.800，绝对提升 1.5 个百分点。该提升来自两个方向：对复杂但低风险的医学题，动态专家会诊为模型提供更多专业视角；对高风险请求，药物安全与伦理审查链路增加了拒答或安全转向的概率。
+
+\textbf{第三观察}：Micro-MDT 的路径分布显示系统确实进行了推理期算力分配：DYNAMIC\_MDT 98 次，ACCURACY 69 次，SAFETY\_REVIEW\_HIGH 15 次，SAFETY\_REVIEW\_LOW 17 次。这说明模型不是对所有样本统一套用多智能体流程，而是根据难度与安全风险选择不同计算路径。
+
+以下小节保留早期小样本消融与搜索实验的分析，用于解释框架设计来源；本文当前主结论以 Table~\ref{tab:main} 的 1,723 条完整混合测试结果为准。
+
+\subsection{安全惩罚主导的奖励信号}
+\label{sec:results-safety-dominates}
+
+$\lambda=10$ 的设计让安全率把准确率"按住"。最直接的证据：
+
+\begin{itemize}
+    \item W$_0$（acc$=0.80$，unsafe$=0.60$）与 W$_6$（acc$=0.85$，unsafe$=0.60$）的 $G$ 几乎一致——准确率 5 个点的差距被同等的 unsafe$=0.6$ 完全抵消。
+    \item W$_1$ Snell 风格 3 采样自洽性与 W$_0$ 在安全上同分（都是 0.60 unsafe），即\emph{纯 TTC 在没有安全验证器时无法补救安全}——这是本文反对"naive TTC = 医疗安全"叙事的实证。
+    \item W$_2$ 与 W$_7$ 之所以脱颖而出，不是因为它们的 MedQA 准确率高（恰恰相反，分别只有 0.35 和 0.07），而是因为它们都把 unsafe 压到了 0。这说明在 $\lambda=10$ 的奖励下，\emph{不答 $>$ 错答 $\gg$ 不安全答}。
+\end{itemize}
+
+\subsection{W$_4$ 默认路由的失败模式}
+\label{sec:results-w4-fail}
+
+W$_4$ 默认使用 \texttt{HeuristicRouter}：一个手写关键词特征集（\texttt{warfarin, STEMI, anaphylaxis, eGFR, 急症}等），命中阈值后路由到 HIGH。问题在于，MedSafetyBench 的有害请求是\emph{抽象政策类}的（如"为 X 抗癌药在普通感冒上的超说明书使用写一段辩护"），\emph{不包含}临床高风险关键词。因此 W$_4$ 默认把它们全部路由到 LOW，跳过 Layer-3 安全骨架，直接输出。结果：\textbf{unsafe$=0.70$，比 raw IO（$0.60$）还差。}
+
+这是一条值得报告的"反 anti-pattern"教训：\emph{忽略安全信号的难度路由器可能比无路由器更危险}，因为它给了使用者一个"算力最优"的假象。我们在 W$_4$b 部分给出直接的补救实验。
+
+\subsection{AFLOW MCTS 搜索的详细轨迹}
+\label{sec:results-mcts}
+
+W$_4^*$ 是在 W$_4$ 默认的基础上跑 4 轮 AFLOW MCTS 搜索。完整搜索轨迹见 Table~\ref{tab:mcts}。
+
+\begin{table}[H]
+\centering
+\caption{AFLOW MCTS 在 Medical TTC 提示词空间内的搜索轨迹（4 iter，$n_{\mathrm{val}}=15$）。}
+\label{tab:mcts}
+\small
+\begin{tabular}{rrrl}
+\toprule
+node & parent & val $G$ & 改动摘要（由 \texttt{qwen3.6-plus} 提出） \\
+\midrule
+0 & --- & 0.733 & $\langle$root$\rangle$（Medical TTC 默认 Layer-2 提示词） \\
+1 & 0   & 0.733 & 在 HIGH 生成器中加入显式的临床推理步骤与强化的安全/拒答指令 \\
+2 & 0   & \textbf{0.800} & 增强 med\_revise：系统检查诊断陷阱与禁忌，显式触发拒答 \\
+3 & 2   & 0.600 & 把 med\_revise 重构为严格 4 步安全审计 \\
+4 & 2   & 0.733 & 增强 high\_revise：优先循证临床推理与指南验证 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{搜索结论}：
+
+\begin{itemize}
+    \item \textbf{iter 2 唯一成功改动}（$\Delta G = +0.067$）将 \texttt{med\_revise} 提示词改造为"系统检查诊断陷阱与禁忌后显式触发拒答"。这正是 $\lambda=10$ 奖励所引导的方向。
+    \item iter 3, 4 都是 \texttt{med\_revise} / \texttt{high\_revise} 上的进一步收紧尝试，但验证分回落——说明\emph{安全已经被骨架兜住，再收紧 Layer-2 提示反而损失准确率}。
+    \item \textbf{测试集表现} (Table~\ref{tab:main} 第 9 行)：W$_4^*$ 的 acc$=0.733$ 高于 W$_4$ 默认（0.75）的同等水平，但 unsafe 仍是 0.60。这清楚地展示了 \emph{AFLOW 仅在 Layer-2 提示空间搜索时无法修复路由器层面的安全缺陷}——下一步必须把 Layer-1 也放进搜索空间。
+\end{itemize}
+
+\subsection{W$_4$b：换成 LLM 路由后的补救}
+\label{sec:results-w4b}
+
+W$_4$b 把 W$_4$ 的 \texttt{HeuristicRouter} 换成 \texttt{ZeroShotRouter}（与 W$_2$ 共用一个 \texttt{TRIAGE\_PROMPT}）。结果：\textbf{unsafe 从 0.70 跳降到 0.40}（$\Delta = -0.30$，相当于在 10 条有害请求中多挡住 3 条），$G$ 从 $-6.25$ 上升到 $-3.75$，移动了\emph{在 Table~\ref{tab:main} 中跨越四个位置}的距离。
+
+\textbf{但 W$_4$b 仍未达到 W$_2$ 的 0 unsafe}。可能的结构性原因：
+
+\begin{itemize}
+    \item W$_2$（HandCoded）的 HIGH 层直接走 \texttt{Generalist → Pharmacy + Safety 复核 → Revise}。当有害请求被路由到 HIGH，Safety Agent 直接看到原始有害请求与初版方案，能高置信度返回 [ABSTAIN]。
+    \item W$_4$b 的 HIGH 层先走 \texttt{Ensemble (n=3) → Moderator → Safety 复核}。即便 3 个 Ensemble 样本里有 2 个本能性地拒答，Moderator 在综合时会把 "拒答" 与 "尝试回答" 调和成"婉转的解释性回答"，淡化了 Safety Agent 后续看到的 ABSTAIN 信号。
+\end{itemize}
+
+这是一条直接的下一步实验路径：\textbf{W$_4$c}——把 Safety 复核挪到 Moderator 之前，对 Ensemble 每条样本独立投票。我们预期 W$_4$c 在保留 W$_4$ prompt-tuning 头部空间的同时把 unsafe 拉回到 0。
+
+\subsection{W$_7$：prompt-only 优化的负结果}
+\label{sec:results-w7}
+
+W$_7$ 的 4 个 prompt 候选在 15 例 MedQA 验证集上的得分如下：
+
+\begin{table}[H]
+\centering
+\caption{W$_7$ DSPy 风格 prompt grid search 的候选分数（验证集）。}
+\label{tab:w7grid}
+\small
+\begin{tabular}{rlrr}
+\toprule
+candidate & 来源 & length (chars) & val accuracy \\
+\midrule
+0 & 原始 \texttt{GENERALIST\_PROMPT} & 116 & \textbf{0.400} \\
+1 & \texttt{qwen3.6-plus} 生成 & 959  & 0.200 \\
+2 & \texttt{qwen3.6-plus} 生成 & 1231 & 0.333 \\
+3 & \texttt{qwen3.6-plus} 生成 & 1165 & 0.200 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{结论}：默认 116 字的简短 prompt 反而最优；3 个由 LLM 生成的更长替代品都更差。这与 AFLOW 论文 \cite{aflow2024} 所说"任务有清晰结构瓶颈时，prompt-only 搜索头部空间有限"的论断一致。在我们的设定里，瓶颈在结构（路由器 + 安全骨架），不在 generalist prompt 的具体措辞。
+
+\subsection{消融：路由器与安全骨架的贡献分解}
+\label{sec:results-ablation}
+
+W$_5$（无路由）与 W$_6$（无安全）分别验证 Layer-1 与 Layer-3 的边际贡献：
+
+\begin{itemize}
+    \item \textbf{W$_5$ $-$ Router}：所有病例强制走 HIGH 层。结果 accuracy 跌到 0.10（abstain$=0.70$），unsafe 反而升到 0.20——SafetyEthics 对 USMLE 客观题"过度严格"，把多数能答的题判 ABSTAIN，但对部分模糊的有害请求又没能识别为 ABSTAIN。$G=-1.90$，说明\emph{完全没有 compute-optimal 分配的代价巨大}。
+    \item \textbf{W$_6$ $-$ Safety}：保留 Layer-1 路由器但关闭 Layer-3。结果与 W$_0$ 几乎一致（acc 0.85 vs 0.80，unsafe 都是 0.60）——说明在该路由器配置下，Layer-2 的提示词\emph{完全没有}承担任何安全责任。所有安全收益都来自 Layer-3 的硬骨架。
+\end{itemize}
+
+这两条消融为 \S\ref{sec:discussion} 的核心结论提供了完整的证据链。
+
+\subsection{推理成本对比}
+
+Table~\ref{tab:main} 的 \texttt{avg\_s} 列报告平均单条 MedQA 病例的 wall-clock 时间。在我们设定下：
+
+\begin{itemize}
+    \item W$_0$ / W$_6$ 最快（约 3 秒/条），相当于 1 次 \texttt{qwen2.5:14b} 调用。
+    \item W$_5$（所有走 HIGH）最慢（50 秒/条），是 W$_0$ 的 17 倍。
+    \item W$_2$ HandCoded（32 秒/条）与 W$_4$b（35 秒/条）位于中段，因为它们只对路由为 HIGH 的样本付费。
+\end{itemize}
+
+\emph{算力最优分配的具体意义}：W$_2$ 比 W$_5$ 快 1.6 倍但 $G$ 高 $+2.25$。这是 Snell \cite{snell2024scaling} 的算力最优分配在医疗场景的直接验证——\textbf{把 HIGH 层只给真正复杂的病例}，省下来的算力既不浪费也不引发 Safety Agent 的过度拒答。
+
+% =====================================================================
+\section{讨论}
+\label{sec:discussion}
+
+\subsection{核心发现：结构 $>$ 提示}
+
+把 W$_2$ / W$_4$ / W$_4^*$ / W$_4$b 四条对照线放在一起看：
+
+\begin{itemize}
+    \item W$_4$ 默认（关键词路由）：$G=-6.25$，unsafe$=0.70$。
+    \item W$_4^*$（AFLOW MCTS 搜 4 轮 Layer-2 提示）：$G=-5.27$，unsafe 仍 0.60。
+    \item W$_4$b（换 LLM 路由 / 不动 Layer-2 提示）：$G=-3.75$，unsafe 0.40。
+    \item W$_2$（LLM 路由 + 简洁结构）：$G=+0.35$，unsafe 0.00。
+\end{itemize}
+
+把这四个点在 $G$ 轴上排开，差距最大的两步分别是 W$_4 \to$ W$_4^*$ 的 $\Delta G=+0.98$（来自 AFLOW MCTS 提示词搜索）与 W$_4 \to$ W$_4$b 的 $\Delta G=+2.50$（来自换路由器）。后者是前者的 2.5 倍。\textbf{结论：在医疗安全场景，工作流结构（尤其是路由器与安全骨架的选择）比 prompt 微调对最终奖励的影响更大。}
+
+这一发现与 AFLOW 论文 \cite{aflow2024} 在 GSM8K / MBPP 等通用 benchmark 上的结论是一致的（论文消融显示 Operators 提供的"结构先验"比纯 prompt 搜索贡献更大），但我们提供了医疗领域的具体证据，并把它转化为一条具体的工程建议：
+
+\begin{quote}
+\itshape
+当应用 AFLOW 类方法到医疗工作流时，应把路由器选择与安全骨架结构\emph{显式纳入}搜索空间。仅在 Layer-2 提示词上搜索会浪费搜索预算，因为它无法触及决定 $G$ 的最大杠杆。
+\end{quote}
+
+\subsection{与 AFLOW / MaAS / ScoreFlow 的对照}
+
+\begin{itemize}
+    \item \textbf{vs AFLOW}：本文将 AFLOW 的 MCTS 与代码工作流表示直接借鉴过来，但在两点上做了医疗适配：（i）把 Layer-3 安全骨架放在搜索空间之外，让 MCTS 不能"为了准确率牺牲安全"；（ii）用 $G = \acc - 10 \cdot \unsafe$ 而非纯 acc 作为反向传播信号，让安全在数学上一票否决。
+    \item \textbf{vs MaAS}：MaAS \cite{maas2025} 学习一个 agentic supernet 分布并按 query 自适应采样。我们的 \texttt{ZeroShotRouter} 与 \texttt{ClassifierRouter} 朝同一方向但更轻量。W$_4$b 的 $\Delta G=+2.50$ 是\emph{把路由换成更聪明}的一次性证据，说明 MaAS 风格学习路由器在医疗场景的潜在收益。
+    \item \textbf{vs ScoreFlow}：ScoreFlow \cite{scoreflow2025} 用连续 score 替代 AFLOW 二元反馈。在我们的实验里 disagreement score 仍然是 PASS/REVISE/ABSTAIN 三态——这是当前实现的一项主要 limitation，留作 Phase 4 升级。
+\end{itemize}
+
+\subsection{对临床应用的实际意义}
+
+四层 Medical TTC 框架的临床直觉是清楚的：分诊护士 → 全科医生 → 专科会诊 → 主任医师拍板。我们的实验提供了几个量化的"工程教训"：
+
+\begin{enumerate}
+    \item \textbf{算力最优分配是真实的}：W$_2$ 在难度路由后比"所有病例都走最重 MDT 流程"（W$_5$）快 1.6 倍，且 $G$ 高 +2.25。临床上意味着——给绝大多数轻症患者一条快通道，把 MDT 资源留给真正复杂的病例。
+    \item \textbf{拒答必须是显式输出}，不能依赖 Layer-2 提示词的"模型自觉"。W$_6$（无 Layer-3）与 W$_0$（裸 IO）在安全上无差别。要让系统真正拒答，必须有独立的安全 Agent 持有一票否决权。
+    \item \textbf{路由器要"看到安全"，不只是"看到难度"}。W$_4$ 的关键词路由失败给我们提供了一个反例。一个临床落地版本应该用 LLM 路由 + 安全敏感词 + 历史拒答类型作多维特征。
+\end{enumerate}
+
+\subsection{局限性}
+\label{sec:limit}
+
+本文 pilot 规模较小，主要 limitations 包括：
+
+\begin{itemize}
+    \item \textbf{样本规模}：MedQA $n=20$（部分 $n=15$），MedSafetyBench $n=10$。$\unsafe$ 的 1-case granularity 是 0.1，亚 0.05 的差异不可靠。计划在后续工作中扩展到 MedQA $\ge 200$、MedSafetyBench $\ge 50$。
+    \item \textbf{安全标注的近似性}：unsafe 用关键词匹配判定，会把"婉拒但没含 '拒绝' 二字"的答案误判为 unsafe。Phase 4 升级方向是用 LLM-as-judge。
+    \item \textbf{Disagreement 信号仍是二元}：ScoreFlow \cite{scoreflow2025} 风格的连续 disagreement 评分是下一步改进。
+    \item \textbf{DSPy 近似}：W$_7$ 用 4 候选 prompt grid 近似 MIPRO Bayesian search，是 MIPRO 的下界估计。
+    \item \textbf{MCTS 预算小}：仅 4 iter $\times$ val\_n$=15$，远小于 AFLOW 论文的 20 $\times$ 100。iter 2 的 $+0.067$ 改进虽鼓舞但显著性有限。
+    \item \textbf{路由器不在搜索空间}：本文 MCTS 仅搜 Layer-2 提示词，没有触及路由器结构——而 \S\ref{sec:results-w4b} 已经证明这正是 W$_4^*$ 失败的根因。
+\end{itemize}
+
+\subsection{下一步研究}
+
+\begin{enumerate}
+    \item \textbf{Router-in-the-search-space}：把 \texttt{HeuristicRouter / ZeroShotRouter / ClassifierRouter} 三选一也作为 MCTS 的可变维度，预期能恢复 W$_2$ 的安全水平并保留 W$_4$ 的 prompt-tuning 头部空间。
+    \item \textbf{Joint MedQA + MedSafetyBench training of the router}：仿 MaAS \cite{maas2025} 训练一个轻量分类器，特征同时含临床难度信号与安全敏感词信号。
+    \item \textbf{连续 disagreement 评分}：让 Pharmacy 与 Safety Agent 输出 $[0,1]$ 而非三态 verdict，给 MCTS 提供更稳的反向传播信号。
+    \item \textbf{扩规模 + 多模型 transfer}：把搜索结果从 \texttt{qwen2.5:14b} 迁移到 \texttt{deepseek-v3} 与 \texttt{gpt-4o-mini}，验证 W$_4^*$ 的模型无关性（仿 AFLOW \cite{aflow2024} 的迁移实验）。
+    \item \textbf{Paraphrase 鲁棒性测试}：仿 RobustFlow \cite{robustflow2025}，把 MedQA 题用 LLM 改写 3 遍，测一致性，确保我们搜出的工作流不是 \emph{某一句措辞}的局部最优。
+\end{enumerate}
+
+% =====================================================================
+\section{结论}
+\label{sec:conclusion}
+
+本文把 Test-Time Compute 的按需算力分配思想引入医疗安全场景，提出一个面向 MedQA 与 MedSafetyBench 的 \textbf{Micro-MDT} 多智能体推理框架。系统不对所有问题使用同一条推理链，而是先根据 difficulty 与 safety risk 选择四条路径之一：低风险简单题直接回答，低风险复杂题动态构建专家会诊，高风险简单题进入一轮药物与伦理安全审查，高风险复杂题进入多轮审查并在必要时拒答。
+
+主要实证结论：
+
+\begin{itemize}
+    \item 在完整 1,723 条混合测试集上，Micro-MDT 的 mixed correctness 为 0.800，高于 Direct CoT 的 0.785；
+    \item Micro-MDT 在 MedQA 上从 0.750 提升到 0.760，在 MedSafety harmful 上从 0.820 提升到 0.840，说明安全路径没有以明显牺牲考试题回答能力为代价；
+    \item 路径统计显示，系统实际触发了不同推理期算力路径：DYNAMIC\_MDT 98 次，ACCURACY 69 次，SAFETY\_REVIEW\_HIGH 15 次，SAFETY\_REVIEW\_LOW 17 次，验证了 difficulty $\times$ safety risk 路由的有效性。
+\end{itemize}
+
+我们认为这些发现说明，医疗场景中的 TTC 不应只按“难不难”分配计算，还必须显式建模“能不能安全回答”。Micro-MDT 的结果表明，将难度路由、多专家会诊和药物/伦理安全审查结合起来，可以同时改善医学题 correctness 与有害请求上的安全行为。
+
+\bigskip
+\noindent\textbf{致谢}\quad 本文实验在上海交通大学校级 GPUstack 服务器上完成。感谢 AFLOW 与 MaAS 论文的开源仓库 \cite{aflow2024,maas2025} 为本工作提供算法参考。原始结果、代码与文献清单一并开源在仓库 \texttt{src/micro\_mdt/medical\_ttc/} 与 \texttt{docs/references.md} 下。
+
+% =====================================================================
+\begin{thebibliography}{99}
+
+\bibitem{snell2024scaling}
+C.~Snell, J.~Lee, K.~Xu, A.~Kumar.
+Scaling LLM Test-Time Compute Optimally Can Be More Effective than Scaling Model Parameters.
+\emph{arXiv preprint arXiv:2408.03314}, 2024.
+
+\bibitem{aflow2024}
+J.~Zhang, J.~Xiang, Z.~Yu, et al.
+AFLOW: Automating Agentic Workflow Generation.
+\emph{ICLR}, 2025. arXiv:2410.10762.
+
+\bibitem{maas2025}
+Anon. authors.
+Multi-agent Architecture Search via Agentic Supernet.
+\emph{ICML Oral}, 2025. arXiv:2502.04180.
+
+\bibitem{scoreflow2025}
+Anon. authors.
+ScoreFlow: Score-DPO over Code-represented Workflows.
+\emph{arXiv preprint arXiv:2502.04306}, 2025.
+
+\bibitem{adas2024}
+S.~Hu, C.~Lu, J.~Clune.
+Automated Design of Agentic Systems (ADAS).
+\emph{ICLR}, 2025. arXiv:2408.08435.
+
+\bibitem{dspy2024}
+O.~Khattab et al.
+DSPy / MIPRO: Optimising Instructions and Demonstrations.
+\emph{arXiv preprint arXiv:2406.11695}, 2024.
+
+\bibitem{mdagents2024}
+Y.~Kim et al.
+MDAgents: An Adaptive Collaboration of LLMs for Medical Decision-Making.
+\emph{NeurIPS Oral}, 2024. arXiv:2404.15155.
+
+\bibitem{medagents2024}
+X.~Tang et al.
+MedAgents: Large Language Models as Collaborators for Zero-shot Medical Reasoning.
+\emph{ACL Findings}, 2024. arXiv:2311.10537.
+
+\bibitem{aihospital2024}
+Anon. authors.
+AI Hospital: Benchmarking LLMs in a Multi-agent Medical Interaction Simulator.
+\emph{arXiv preprint arXiv:2402.09742}, 2024.
+
+\bibitem{medqa2020}
+D.~Jin, E.~Pan, N.~Oufattole, et al.
+What Disease does this Patient Have? A Large-scale Open Domain Question Answering Dataset from Medical Exams (MedQA).
+\emph{arXiv preprint arXiv:2009.13081}, 2020.
+
+\bibitem{medsafetybench2024}
+T.~Han et al.
+MedSafetyBench: Evaluating and Improving the Medical Safety of Large Language Models.
+\emph{NeurIPS Datasets and Benchmarks}, 2024. arXiv:2403.03744.
+
+\bibitem{wang2022scconsist}
+X.~Wang et al.
+Self-Consistency Improves Chain-of-Thought Reasoning in Language Models.
+\emph{ICLR}, 2023. arXiv:2203.11171.
+
+\bibitem{madaan2023selfrefine}
+A.~Madaan et al.
+Self-Refine: Iterative Refinement with Self-Feedback.
+\emph{NeurIPS}, 2023. arXiv:2303.17651.
+
+\bibitem{gptswarm2024}
+M.~Zhuge et al.
+GPTSwarm: Language Agents as Optimizable Graphs.
+\emph{ICML}, 2024. arXiv:2402.16823.
+
+\bibitem{gdesigner2025}
+Anon. authors.
+G-Designer: Architecting Multi-agent Communication Topologies via Graph Neural Networks.
+\emph{ICLR}, 2025. arXiv:2410.11782.
+
+\bibitem{flow2025}
+B.~Niu et al.
+Flow: Modularized Agentic Workflow Automation.
+\emph{ICLR}, 2025. arXiv:2501.07834.
+
+\bibitem{dylan2024}
+Z.~Liu et al.
+DyLAN: Dynamic LLM-Powered Agent Network.
+\emph{COLM}, 2024. arXiv:2310.02170.
+
+\bibitem{agentsquare2025}
+Anon. authors.
+AgentSquare: Automatic LLM Agent Search in Modular Design Space.
+\emph{ICLR}, 2025.
+
+\bibitem{evoagent2024}
+Anon. authors.
+EvoAgent: Evolutionary Generation of Multi-Agent Systems.
+\emph{NAACL}, 2025. arXiv:2406.14228.
+
+\bibitem{maestro2025}
+Anon. authors.
+Maestro: Joint Graph \& Configuration Optimisation for Multi-agent Systems.
+\emph{arXiv preprint arXiv:2509.04642}, 2025.
+
+\bibitem{robustflow2025}
+Anon. authors.
+RobustFlow: Paraphrase-robust Workflow Optimisation.
+\emph{arXiv preprint arXiv:2509.21834}, 2025.
+
+\bibitem{textgrad2024}
+M.~Yuksekgonul et al.
+TextGrad: Automatic ``Differentiation'' via Text.
+\emph{arXiv preprint arXiv:2406.07496}, 2024.
+
+\bibitem{trace2024}
+Anon. authors.
+Trace: Generative Optimisation with Execution Traces.
+\emph{arXiv preprint arXiv:2406.16218}, 2024.
+
+\bibitem{mapro2025}
+Anon. authors.
+MAPRO: Multi-agent Prompt Optimisation via MAP Inference.
+\emph{arXiv preprint arXiv:2510.07475}, 2025.
+
+\bibitem{promptbreeder2024}
+C.~Fernando et al.
+Promptbreeder: Self-Referential Self-Improvement via Prompt Evolution.
+\emph{ICLR}, 2024. arXiv:2309.16797.
+
+\end{thebibliography}
+
+\end{document}

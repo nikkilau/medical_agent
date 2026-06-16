@@ -1,0 +1,313 @@
+{
+  "config": {
+    "n_medqa": 500,
+    "seed": 42,
+    "split": "test",
+    "output_dir": "reports/samas_baselines_medqa_full_source",
+    "use_mock": false,
+    "base_url": "http://202.120.24.199:13000/v1",
+    "model": "qwen2.5:14b",
+    "embedding_model": "nomic-embed-text",
+    "api_key_env": "GPUSTACK_API_KEY",
+    "claude_path": "/home/sjtu/workspace/ycy/CLAUDE.md",
+    "methods": "B0_RawIO",
+    "include_untrained_b6": false,
+    "medagents_method": "base_direct",
+    "medagents_max_attempt_vote": 3,
+    "mdagents_difficulty": "basic",
+    "samas_operator_checkpoint": "",
+    "samas_semantic_dim": 32,
+    "n_medqa_requested": 500,
+    "api_key_present": true
+  },
+  "started": 1781090711.9322662,
+  "B0_RawIO": {
+    "medqa": {
+      "n": 25,
+      "accuracy": 0.72,
+      "abstain_rate": 0.0,
+      "correct_on_answered": 0.72,
+      "avg_rounds": 1.0,
+      "avg_elapsed_s": 23.672408676147462,
+      "score_g": 0.72,
+      "raw": [
+        {
+          "case_id": "medqa_test_2",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 27.43233323097229,
+          "raw_answer": "B",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_7",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 23.070301055908203,
+          "raw_answer": "C",
+          "ground_truth": "C"
+        },
+        {
+          "case_id": "medqa_test_10",
+          "correct": false,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 13.90944528579712,
+          "raw_answer": "A",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_990",
+          "correct": false,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 31.936439514160156,
+          "raw_answer": "A",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_202",
+          "correct": false,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 15.46034836769104,
+          "raw_answer": "B",
+          "ground_truth": "C"
+        },
+        {
+          "case_id": "medqa_test_1258",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 24.637881994247437,
+          "raw_answer": "A",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_277",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 14.699233770370483,
+          "raw_answer": "D",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_427",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 16.028053045272827,
+          "raw_answer": "B",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_15",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 19.373623847961426,
+          "raw_answer": "B",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_1202",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 27.617477893829346,
+          "raw_answer": "A",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_1027",
+          "correct": false,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 26.138144969940186,
+          "raw_answer": "A",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_827",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 32.41779637336731,
+          "raw_answer": "A",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_503",
+          "correct": false,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 20.03360605239868,
+          "raw_answer": "A",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_325",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 14.9583580493927,
+          "raw_answer": "B",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_681",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 25.738842725753784,
+          "raw_answer": "B",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_932",
+          "correct": false,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 17.598022937774658,
+          "raw_answer": "C",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_387",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 21.41603994369507,
+          "raw_answer": "B",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_235",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 31.34337830543518,
+          "raw_answer": "A",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_66",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 19.610509634017944,
+          "raw_answer": "C",
+          "ground_truth": "C"
+        },
+        {
+          "case_id": "medqa_test_347",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 39.432305335998535,
+          "raw_answer": "A",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_442",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 19.043821573257446,
+          "raw_answer": "C",
+          "ground_truth": "C"
+        },
+        {
+          "case_id": "medqa_test_1121",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 34.309152126312256,
+          "raw_answer": "A",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_376",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 18.958664894104004,
+          "raw_answer": "D",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_35",
+          "correct": true,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 32.04996967315674,
+          "raw_answer": "A",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_332",
+          "correct": false,
+          "abstained": false,
+          "rounds": 1,
+          "difficulty": "N/A",
+          "expected_difficulty": "None",
+          "elapsed_s": 24.596466302871704,
+          "raw_answer": "C",
+          "ground_truth": "D"
+        }
+      ]
+    },
+    "wall_s": 527.4350869655609
+  }
+}

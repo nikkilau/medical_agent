@@ -1,0 +1,254 @@
+{
+  "config": {
+    "n_medqa": 20,
+    "seed": 42,
+    "split": "test",
+    "output_dir": "reports/samas_matrix_medqa_parallel/B4_MDAgents",
+    "use_mock": false,
+    "base_url": "http://202.120.24.199:13000/v1",
+    "model": "qwen2.5:14b",
+    "api_key_env": "GPUSTACK_API_KEY",
+    "claude_path": "/home/sjtu/workspace/ycy/CLAUDE.md",
+    "methods": "B4_MDAgents",
+    "api_key_present": true
+  },
+  "started": 1781063998.199693,
+  "notes": {
+    "B6": "Trained profiler/controller not run in this pilot; this row is SAMAS prompt-profiler with review enabled."
+  },
+  "B4_MDAgents": {
+    "medqa": {
+      "n": 20,
+      "accuracy": 0.0,
+      "abstain_rate": 0.0,
+      "correct_on_answered": 0.0,
+      "avg_rounds": 0,
+      "avg_elapsed_s": 0.00014644861221313477,
+      "score_g": 0.0,
+      "raw": [
+        {
+          "case_id": "medqa_test_990",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.0007617473602294922,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_202",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00015163421630859375,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "C"
+        },
+        {
+          "case_id": "medqa_test_1258",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00013184547424316406,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_277",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011491775512695312,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_427",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.000110626220703125,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_15",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011038780212402344,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_1202",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011038780212402344,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_1027",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00010776519775390625,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_827",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.0001087188720703125,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_503",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00010800361633300781,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_325",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011777877807617188,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_681",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011372566223144531,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_932",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011301040649414062,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "D"
+        },
+        {
+          "case_id": "medqa_test_387",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011134147644042969,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "B"
+        },
+        {
+          "case_id": "medqa_test_235",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011038780212402344,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_66",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00010919570922851562,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "C"
+        },
+        {
+          "case_id": "medqa_test_347",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00010824203491210938,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_442",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.0001087188720703125,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "C"
+        },
+        {
+          "case_id": "medqa_test_1121",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011038780212402344,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "A"
+        },
+        {
+          "case_id": "medqa_test_376",
+          "correct": false,
+          "abstained": false,
+          "rounds": 0,
+          "difficulty": null,
+          "expected_difficulty": "None",
+          "elapsed_s": 0.00011014938354492188,
+          "raw_answer": "ERROR: Cannot reach http://202.120.24.199:13000/v1/chat/completions: [Errno 1] Operation not permitted. Check network and MICRO_MDT_BASE_URL.",
+          "ground_truth": "D"
+        }
+      ]
+    },
+    "wall_s": 0.003190279006958008
+  },
+  "elapsed_s": 0.0044078826904296875
+}

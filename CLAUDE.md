@@ -4,50 +4,94 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-Micro-MDT is a zero-dependency Python MVP that implements Test-Time Compute theory (arXiv:2408.03314) as a multi-agent medical safety workflow. It simulates a Multi-Disciplinary Team (MDT) with Proposer/Verifier debate, sequential revision, and safety abstention — but uses **no real patients, no training, and no real medical advice**. The default `MockProvider` is deterministic and requires no API key.
+This repository combines two layers:
+
+1. **Micro-MDT** (original) — a zero-dependency Python MVP that implements
+   Snell-style Test-Time Compute (arXiv:2408.03314) as a hand-written
+   multi-agent medical safety workflow. Triage → Generalist → Pharmacist
+   + SafetyEthics cross-review → optional Reviser → Abstention gate →
+   Documentation agent. Deterministic `MockProvider` ships by default so
+   the demo runs offline with no API key.
+
+2. **Medical TTC** (extension, in `src/medical_ttc/`) — a 4-layer
+   framework adding (i) MaAS-style routers, (ii) AFLOW-style MCTS search
+   over Layer-2 prompts, (iii) hard λ·unsafe safety penalty, (iv) DSPy
+   prompt grid search, evaluated on public benchmarks **MedQA-USMLE** and
+   **MedSafetyBench** under the unified reward
+   `G(W,T) = accuracy − 10 · unsafe_rate`.
+
+⚠️ **Both layers are CS / safety research demos**. No real patients, no
+real medical advice. The original system was already documented this way;
+the extension preserves the disclaimer.
 
 ## Commands
 
-```powershell
-# Run all example cases (mock provider, no API key needed)
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli
-
-# Run a specific case from examples/cases.json
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --case-id case_high_001 --show-trace
-
-# Run an ad-hoc case from text
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --case "患者 70 岁，胸痛伴呼吸困难 30 分钟。"
-
-# Interactive human-in-the-loop mode
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --case-id case_high_003 --interactive-human
-
-# Generate HTML reports
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --output-html reports
-
-# Start web UI
-$env:PYTHONPATH="src"
-python -m micro_mdt.cli --web
-
-# Use real LLM (OpenAI-compatible API)
-$env:PYTHONPATH="src"
-$env:MICRO_MDT_API_KEY="sk-..."
-python -m micro_mdt.cli --provider openai-compatible --case-id case_high_001
-
-# Run tests
-$env:PYTHONPATH="src"
-python -m unittest discover -s tests
+### Smoke tests (no LLM)
+```bash
+PYTHONPATH=src python -m unittest discover -s tests
 ```
 
-The `$env:PYTHONPATH="src"` prefix is only needed when running outside an installed package. If installed via `pip install -e .`, run commands directly (e.g., `micro-mdt`).
+### Original Micro-MDT CLI demos
+```bash
+# Offline demo with all example cases
+PYTHONPATH=src python -m cli
+
+# Single case + trace
+PYTHONPATH=src python -m cli --case-id case_high_001 --show-trace
+
+# Ad-hoc free-text case
+PYTHONPATH=src python -m cli --case "患者 70 岁，胸痛伴呼吸困难 30 分钟。"
+
+# Interactive HITL
+PYTHONPATH=src python -m cli --case-id case_high_003 --interactive-human
+
+# Generate HTML reports
+PYTHONPATH=src python -m cli --output-html reports
+
+# Web UI
+PYTHONPATH=src python -m cli --web
+
+# Real LLM via OpenAI-compatible endpoint
+export MICRO_MDT_API_KEY="sk-..."
+PYTHONPATH=src python -m cli --provider openai-compatible --case-id case_high_001
+```
+
+### Medical TTC experiments (NEW)
+
+Requires `pip install datasets huggingface_hub`.
+
+```bash
+# Phase 1+2: baselines W0–W6 on real MedQA + MedSafetyBench (~60 min)
+HF_ENDPOINT=https://hf-mirror.com \
+MEDTTC_SKIP_MCTS=1 MEDTTC_N_MEDQA=20 MEDTTC_N_SAFETY=10 \
+MEDTTC_OUT=reports/pilot_real PYTHONPATH=src \
+python scripts/run_all_experiments.py
+
+# Phase 3: AFLOW MCTS + W7 DSPy (~70 min)
+HF_ENDPOINT=https://hf-mirror.com \
+DASHSCOPE_API_KEY=sk-... \
+MEDTTC_N_MEDQA=30 MEDTTC_N_SAFETY=10 \
+MEDTTC_MCTS_ITERS=4 MEDTTC_MCTS_VALN=15 \
+MEDTTC_OUT=reports/mcts_v1 \
+MEDTTC_BASELINE_RESULTS=reports/pilot_real/results.json \
+PYTHONPATH=src python scripts/run_mcts_search.py
+
+# Phase 4: W4b LLM-router remediation (~15 min)
+HF_ENDPOINT=https://hf-mirror.com \
+MEDTTC_N_MEDQA=20 MEDTTC_N_SAFETY=10 \
+MEDTTC_OUT=reports/w4b \
+PYTHONPATH=src python scripts/run_w4b.py
+
+# Regenerate report auto-table
+PYTHONPATH=src python scripts/generate_report.py reports/final/results.json
+
+# Compile the paper
+cd paper && xelatex medical_ttc.tex && xelatex medical_ttc.tex
+```
 
 ## Architecture
 
-### Data flow
+### Data flow — original Micro-MDT
 
 ```
 PatientCase ──► MicroMDT.run_case() ──► MDTResult
@@ -58,62 +102,38 @@ PatientCase ──► MicroMDT.run_case() ──► MDTResult
              │      │      │            documents)
              ▼      ▼      ▼
         Generalist  +Pharm  +Pharm
-        (direct)    +Safety +Safety
-                    +1 rev  +≤max_rounds
-                             debate
+                    +Safety +Safety
+                    ±Revise ±Revise loop
 ```
 
-### Difficulty routing (compute-optimal)
+### Data flow — Medical TTC extension
 
-- **LOW**: Triage → Generalist → output (1 LLM call beyond triage). No review.
-- **MEDIUM**: Triage → Generalist → Pharmacist + Safety. If both pass → done (3 calls). If either fails → 1 revision + re-review (5 calls). If still failing → abstain.
-- **HIGH**: Triage → Generalist → debate loop (Pharmacist + Safety → Revision) up to `max_rounds` (default 3). Consensus → output; persistent disagreement → abstain with structured A/B/C options.
+```
+LabeledCase (MedQA / MedSafetyBench)
+     │
+     ▼
+Workflow.__call__(case) → WorkflowResult        ← Workflow base (medical_ttc/workflow.py)
+     │
+     ├─ W0 BaselineIO        ── 1 LLM call
+     ├─ W1 CoTSCWorkflow     ── 3-sample SC
+     ├─ W2 HandCodedMicroMDT ── wraps the original MicroMDT
+     ├─ W3 MDAgentsWorkflow  ── NeurIPS 2024 heuristic
+     ├─ W4 MedicalTTCWorkflow ── 4-layer framework
+     ├─ W7 DSPyPromptOnlyWorkflow ── grid-searched prompt + W2 structure
+     └─ MCTS-derived workflows (W4*) via mcts.py
+     │
+     ▼
+Evaluator (evaluator.py) → AggregateMetrics + safety dict
+     │
+     ▼
+G(W,T) = accuracy − 10 · unsafe_rate    ← compute_g_score()
+```
 
-### Key files
+## Server convention (matches /home/sjtu/workspace/ycy/CLAUDE.md)
 
-| File | Role |
-|---|---|
-| `src/micro_mdt/workflow.py` | Core orchestration: `MicroMDT.run_case()`, `_run_medium()`, `_run_high()`, abstention, human callback, document generation |
-| `src/micro_mdt/agents.py` | `Agent` (prompt + provider → `run()`), `AgentSuite` (7 agents), `parse_difficulty()` / `parse_verdict()` |
-| `src/micro_mdt/models.py` | Dataclasses: `PatientCase`, `AgentResponse`, `DebateRound`, `MDTResult`; enums: `Difficulty`, `Verdict` |
-| `src/micro_mdt/prompts.py` | System prompts for all 7 agents + `DISCLAIMER` constant |
-| `src/micro_mdt/providers.py` | `LLMProvider` (ABC), `MockProvider` (keyword-matching, deterministic), `OpenAICompatibleProvider` (stdlib `urllib`) |
-| `src/micro_mdt/cli.py` | argparse CLI entry point, `ask_human_decision()` interactive callback |
-| `src/micro_mdt/io.py` | Load cases from `examples/cases.json` or from ad-hoc text |
-| `src/micro_mdt/reporting.py` | Terminal markdown-style output |
-| `src/micro_mdt/visualization.py` | HTML report generation with flow diagrams, debate timelines, collapsible traces |
-| `src/micro_mdt/webapp.py` | Interactive web UI on `http://localhost:8080` using stdlib `http.server`; sessions stored in `_SESSIONS` dict |
-
-### The 7 agents (AgentSuite)
-
-1. **Triage** — classifies case as `[LOW]`, `[MEDIUM]`, or `[HIGH]`
-2. **Generalist** (Proposer) — generates initial treatment plan
-3. **GeneralistRevision** — revises plan based on review feedback
-4. **Pharmacist** (Verifier) — checks drug interactions, outputs `[PASS]`/`[REVISE]`/`[ABSTAIN]`
-5. **SafetyEthics** (Verifier) — checks for emergency delay, harm risk, outputs `[PASS]`/`[REVISE]`/`[ABSTAIN]`
-6. **DecisionSynthesis** — generates A/B/C structured options for human doctor when AI deadlocks
-7. **Documentation** — generates EHR draft, patient note, and follow-up reminder from human decision
-
-### Verdict parsing
-
-`parse_verdict()` in `agents.py` matches `[PASS]`, `[ABSTAIN]` in agent output; default is `REVISE`. `parse_difficulty()` matches `[HIGH]`, `[MEDIUM]`; default is `LOW`. Both are case-insensitive and look for the bracket-delimited markers.
-
-### MockProvider design
-
-`MockProvider.complete()` dispatches to keyword-based methods by inspecting the system prompt for Chinese role names (e.g., "分诊 Agent" → `_triage()`). It checks for high-risk terms with negation awareness via `_has_any_unnegated()`. This is the default provider — no network or API key needed.
-
-### Human-in-the-loop pattern
-
-`MicroMDT.run_case()` accepts an optional `human_decision_callback: Callable[[MDTResult], str | None]`. When a case triggers abstention:
-1. `DecisionSynthesis` agent generates A/B/C options → stored in `result.human_options`
-2. If callback provided, it's called with the result; return value becomes `result.human_decision`
-3. With a decision, `Documentation` agent generates three documents (EHR draft, patient note, reminder)
-4. CLI provides `ask_human_decision()` as the callback; web app stores result in session and waits for a second POST
-
-### Provider selection
-
-CLI `--provider` flag: `mock` (default, zero-cost) or `openai-compatible`. The `OpenAICompatibleProvider` reads from env vars: `MICRO_MDT_API_KEY` (or `OPENAI_API_KEY`), `MICRO_MDT_BASE_URL`, `MICRO_MDT_MODEL`. It uses only stdlib `urllib` — no `requests`, no `openai` package.
-
-### Testing
-
-Tests use `unittest` with `MockProvider` (no network). All workflow paths are tested: LOW direct, MEDIUM revision, HIGH abstention, human decision → documentation, HTML rendering. Test file: `tests/test_workflow.py` — two classes, `MicroMDTWorkflowTests` and `VisualizationTests`.
+- **Executor LLM**: GPUstack `qwen2.5:14b` (http://202.120.5.12:18080)
+- **Optimizer LLM**: Aliyun `qwen3.6-plus` via dashscope
+- **Python env**: `conda activate py310-torch`
+- **HF mirror**: `https://hf-mirror.com` (HuggingFace direct unreachable)
+- **GitHub mirror**: `https://ghproxy.net` (for MedSafetyBench raw files)
+- **Parameter style**: per server convention, use `@dataclass`-defined config objects rather than `argparse`; the new entry-point scripts honour this.

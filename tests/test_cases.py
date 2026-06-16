@@ -2,7 +2,7 @@ import unittest
 from collections import Counter
 from pathlib import Path
 
-from micro_mdt.io import load_cases
+from micro_mdt.case_io import load_cases
 from micro_mdt.models import Difficulty
 
 

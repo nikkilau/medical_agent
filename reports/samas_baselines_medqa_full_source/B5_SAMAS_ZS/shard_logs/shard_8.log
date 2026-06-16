@@ -1,0 +1,41 @@
+[data] loading MedQA split=test n=500 seed=42
+Using the latest cached version of the dataset since GBaker/MedQA-USMLE-4-options couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at data/medqa/GBaker___med_qa-usmle-4-options/default/0.0.0/0fb93dd23a7339b6dcd27e241cb9b5eca62d4d18 (last modified on Sat Jun  6 10:45:44 2026).
+[data] got 500 cases; shard 8/16 has 31 cases
+[provider] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=qwen2.5:14b
+[LLM Provider] model=qwen2.5:14b, endpoint=http://202.120.24.199:13000/v1/chat/completions
+[embedding] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=nomic-embed-text
+[Embedding Provider] model=nomic-embed-text, endpoint=http://202.120.24.199:13000/v1/embeddings
+[B5_SAMAS_ZS] completed=0 remaining=31 shard=8/16 out=reports/samas_baselines_medqa_full_source/B5_SAMAS_ZS/shards/shard_08_of_16.json
+[B5_SAMAS_ZS] 1/31 (+1/31) OK pred=A gt=A t=36.6s
+[B5_SAMAS_ZS] 2/31 (+2/31) OK pred=C gt=C t=28.7s
+[B5_SAMAS_ZS] 3/31 (+3/31) MISS pred=B gt=D t=32.0s
+[B5_SAMAS_ZS] 4/31 (+4/31) OK pred=C gt=C t=110.9s
+[B5_SAMAS_ZS] 5/31 (+5/31) MISS pred=B gt=A t=59.5s
+[B5_SAMAS_ZS] 6/31 (+6/31) OK pred=C gt=C t=62.5s
+[B5_SAMAS_ZS] 7/31 (+7/31) OK pred=A gt=A t=74.8s
+[B5_SAMAS_ZS] 8/31 (+8/31) OK pred=D gt=D t=48.5s
+[B5_SAMAS_ZS] 9/31 (+9/31) OK pred=C gt=C t=46.5s
+[B5_SAMAS_ZS] 10/31 (+10/31) OK pred=C gt=C t=88.1s
+[B5_SAMAS_ZS] 11/31 (+11/31) OK pred=A gt=A t=40.0s
+[B5_SAMAS_ZS] 12/31 (+12/31) OK pred=D gt=D t=64.1s
+[B5_SAMAS_ZS] 13/31 (+13/31) OK pred=A gt=A t=30.5s
+[B5_SAMAS_ZS] 14/31 (+14/31) MISS pred=ERROR: Embedding API error 400: Bad Request. Response: {"error":{"message":"input (2155 tokens) is larger than the max context size (2048 tokens). skipping","type":"exceed_context_size_error","param":"","code":400}}. Check embedding model name 'nomic-embed-text' is valid at http://202.120.24.199:13000/v1 gt=A t=133.9s
+[B5_SAMAS_ZS] 15/31 (+15/31) MISS pred=D gt=C t=75.2s
+[B5_SAMAS_ZS] 16/31 (+16/31) OK pred=A gt=A t=45.9s
+[B5_SAMAS_ZS] 17/31 (+17/31) OK pred=B gt=B t=109.5s
+[B5_SAMAS_ZS] 18/31 (+18/31) MISS pred=B gt=C t=42.4s
+[B5_SAMAS_ZS] 19/31 (+19/31) OK pred=A gt=A t=34.6s
+[B5_SAMAS_ZS] 20/31 (+20/31) OK pred=A gt=A t=53.7s
+[B5_SAMAS_ZS] 21/31 (+21/31) MISS pred=A gt=C t=60.9s
+[B5_SAMAS_ZS] 22/31 (+22/31) OK pred=C gt=C t=118.1s
+[B5_SAMAS_ZS] 23/31 (+23/31) OK pred=D gt=D t=90.2s
+[B5_SAMAS_ZS] 24/31 (+24/31) MISS pred=B gt=A t=44.9s
+[B5_SAMAS_ZS] 25/31 (+25/31) MISS pred=C gt=D t=52.6s
+[B5_SAMAS_ZS] 26/31 (+26/31) MISS pred=D gt=B t=51.0s
+[B5_SAMAS_ZS] 27/31 (+27/31) OK pred=C gt=C t=60.7s
+[B5_SAMAS_ZS] 28/31 (+28/31) MISS pred=D gt=A t=33.1s
+[B5_SAMAS_ZS] 29/31 (+29/31) OK pred=D gt=D t=25.5s
+[B5_SAMAS_ZS] 30/31 (+30/31) OK pred=B gt=B t=26.8s
+[B5_SAMAS_ZS] 31/31 (+31/31) OK pred=C gt=C t=35.8s
+[B5_SAMAS_ZS] done n=31 acc=0.677 abstain=0.000 wall=1822.6s

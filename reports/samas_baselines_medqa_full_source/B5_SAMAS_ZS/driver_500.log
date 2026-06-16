@@ -1,0 +1,16 @@
+[data] loading MedQA split=test n=500 seed=42
+Using the latest cached version of the dataset since GBaker/MedQA-USMLE-4-options couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at data/medqa/GBaker___med_qa-usmle-4-options/default/0.0.0/0fb93dd23a7339b6dcd27e241cb9b5eca62d4d18 (last modified on Sat Jun  6 10:45:44 2026).
+[data] got 500 cases
+[provider] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=qwen2.5:14b
+[LLM Provider] model=qwen2.5:14b, endpoint=http://202.120.24.199:13000/v1/chat/completions
+[embedding] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=nomic-embed-text
+[Embedding Provider] model=nomic-embed-text, endpoint=http://202.120.24.199:13000/v1/embeddings
+[B5_SAMAS_ZS] completed=0 remaining=500 out=reports/samas_baselines_medqa_full_source/B5_SAMAS_ZS/results.json
+[B5_SAMAS_ZS] 1/500 (+1/500) OK pred=D gt=D t=30.4s
+[B5_SAMAS_ZS] 2/500 (+2/500) MISS pred=B gt=C t=21.6s
+[B5_SAMAS_ZS] 3/500 (+3/500) OK pred=A gt=A t=54.4s
+[B5_SAMAS_ZS] 4/500 (+4/500) OK pred=D gt=D t=28.4s
+[B5_SAMAS_ZS] 5/500 (+5/500) MISS pred=A gt=B t=55.1s
+[B5_SAMAS_ZS] 6/500 (+6/500) OK pred=B gt=B t=143.6s
+[B5_SAMAS_ZS] 7/500 (+7/500) OK pred=A gt=A t=32.5s

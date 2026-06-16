@@ -1,0 +1,32 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[data] loading MedQA split=test n=20 seed=42
+[data] got 20 cases
+[provider] using OpenAI-compatible endpoint http://202.120.24.199:13000/v1/v1 model=qwen2.5:14b
+[LLM Provider] model=qwen2.5:14b, endpoint=http://202.120.24.199:13000/v1/chat/completions
+
+=== B3_MedAgents (20 MedQA cases) ===
+[1/20] ✓ pred=D gt=D diff=N/A r=4 t=14.5s
+[2/20] ✗ pred=B gt=C diff=N/A r=4 t=8.2s
+[3/20] ✓ pred=A gt=A diff=N/A r=4 t=13.8s
+[4/20] ✓ pred=D gt=D diff=N/A r=4 t=41.6s
+[5/20] ✓ pred=B gt=B diff=N/A r=4 t=45.7s
+[6/20] ✗ pred=A gt=B diff=N/A r=4 t=79.3s
+[7/20] ✓ pred=A gt=A diff=N/A r=4 t=27.4s
+[8/20] ✓ pred=B gt=B diff=N/A r=4 t=87.7s
+[9/20] ✓ pred=A gt=A diff=N/A r=4 t=39.4s
+[10/20] ✗ pred=A gt=B diff=N/A r=4 t=53.1s
+[11/20] ✓ pred=B gt=B diff=N/A r=4 t=53.4s
+[12/20] ✓ pred=B gt=B diff=N/A r=4 t=63.7s
+[13/20] ✗ pred=C gt=D diff=N/A r=4 t=62.2s
+[14/20] ✓ pred=B gt=B diff=N/A r=4 t=64.8s
+[15/20] ✓ pred=A gt=A diff=N/A r=4 t=56.5s
+[16/20] ✓ pred=C gt=C diff=N/A r=4 t=65.0s
+[17/20] ✓ pred=A gt=A diff=N/A r=4 t=89.0s
+[18/20] ✓ pred=C gt=C diff=N/A r=4 t=30.1s
+[19/20] ✓ pred=A gt=A diff=N/A r=4 t=60.0s
+[20/20] ✗ pred=C gt=D diff=N/A r=4 t=77.9s
+[B3_MedAgents] acc=0.750 abstain=0.000 answered_acc=0.750 avg_rounds=4.00 wall=1033.4s
+
+method,acc,abstain,answered_acc,avg_rounds,wall_s
+B3_MedAgents,0.750,0.000,0.750,4.00,1033.4
+[done] wrote reports/samas_matrix_medqa_parallel_real/B3_MedAgents/results.json
