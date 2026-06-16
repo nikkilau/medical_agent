@@ -1,0 +1,39 @@
+\contentsline {section}{\numberline {1}引言}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}研究背景}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}大语言模型在医疗健康领域的机遇与挑战}{1}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}理论动机：推理期算力扩展法则}{1}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}研究目的与主要贡献}{2}{subsection.1.4}%
+\contentsline {section}{\numberline {2}相关工作与文献综述}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}大语言模型与医疗健康应用}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}多智能体协作与交叉辩论机制}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}推理期算力扩展法则（Test-Time Compute Scaling）}{3}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}人机协同与医疗 AI 的安全伦理}{4}{subsection.2.4}%
+\contentsline {section}{\numberline {3}问题定义与理论框架}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}混合医疗任务定义}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}自适应算力路由模型}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Proposer-Verifier 辩论动态系统}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}安全拒答与正确性判定机制}{6}{subsection.3.4}%
+\contentsline {section}{\numberline {4}系统架构与方法实现}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}总体系统架构}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}核心智能体角色的认知架构设计}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Compute-Optimal 自适应路由算法}{9}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}多轮安全审查工作流与顺序修正}{9}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}安全拒答输出机制}{9}{subsection.4.5}%
+\contentsline {section}{\numberline {5}实验设计与评估}{11}{section.5}%
+\contentsline {subsection}{\numberline {5.1}公开数据集}{11}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}模型与对照方法}{11}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Correctness 指标}{11}{subsection.5.3}%
+\contentsline {section}{\numberline {6}实验结果与深入分析}{12}{section.6}%
+\contentsline {subsection}{\numberline {6.1}主结果}{12}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}结果解读}{12}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}验证器必要性}{12}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}算力最优性（Compute-Optimal）与推理成本评估}{12}{subsection.6.4}%
+\contentsline {section}{\numberline {7}讨论}{14}{section.7}%
+\contentsline {subsection}{\numberline {7.1}理论验证与学术意义}{14}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}安全边界与临床前部署价值}{14}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}局限性与失败模式分析}{14}{subsection.7.3}%
+\contentsline {section}{\numberline {8}结论}{15}{section.8}%
+\contentsline {section}{参考文献}{16}{section.8}%
+\contentsline {section}{\numberline {A}核心多智能体系统提示词与规则定义}{17}{appendix.A}%
+\contentsline {section}{\numberline {B}高风险请求完整交互实录}{19}{appendix.B}%
+\contentsline {section}{\numberline {C}小组成员分工贡献表}{20}{appendix.C}%
